@@ -1,23 +1,105 @@
 -- =============================================================================
--- HireSignal — 002 Seed Demo Data (Optional direct SQL)
--- Run this in Supabase SQL Editor if you prefer seeding directly via SQL.
+-- HireSignal — 002 Seed Demo Data (Direct SQL Migration)
+-- NOTE: If you already ran `npm run seed`, your database is already populated!
+-- This SQL script is provided if you want to seed directly via Supabase SQL Editor.
 -- =============================================================================
 
--- Ensure a demo recruiter profile exists
-INSERT INTO public.profiles (id, role, full_name)
-VALUES ('00000000-0000-0000-0000-000000000001', 'recruiter', 'Sarah Jenkins (Lead Recruiter)')
-ON CONFLICT (id) DO UPDATE SET full_name = EXCLUDED.full_name;
+-- Enable pgcrypto for password hashing if not already available
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Ensure demo candidate profiles exist
+-- 1. Insert into auth.users first to satisfy foreign key (profiles_id_fkey)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  aud,
+  role,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at
+)
+VALUES
+  (
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'recruiter@hiresignal.demo',
+    crypt('Password123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Sarah Jenkins (Lead Recruiter)","role":"recruiter"}',
+    now(),
+    now()
+  ),
+  (
+    '00000000-0000-0000-0000-000000000002',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'aryan.mehta@hiresignal.demo',
+    crypt('Password123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Aryan Mehta","role":"candidate"}',
+    now(),
+    now()
+  ),
+  (
+    '00000000-0000-0000-0000-000000000003',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'priya.sharma@hiresignal.demo',
+    crypt('Password123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Priya Sharma","role":"candidate"}',
+    now(),
+    now()
+  ),
+  (
+    '00000000-0000-0000-0000-000000000004',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'rahul.gupta@hiresignal.demo',
+    crypt('Password123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Rahul Gupta","role":"candidate"}',
+    now(),
+    now()
+  ),
+  (
+    '00000000-0000-0000-0000-000000000005',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'sneha.patel@hiresignal.demo',
+    crypt('Password123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Sneha Patel","role":"candidate"}',
+    now(),
+    now()
+  )
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. Insert into public.profiles
 INSERT INTO public.profiles (id, role, full_name)
 VALUES
+  ('00000000-0000-0000-0000-000000000001', 'recruiter', 'Sarah Jenkins (Lead Recruiter)'),
   ('00000000-0000-0000-0000-000000000002', 'candidate', 'Aryan Mehta'),
   ('00000000-0000-0000-0000-000000000003', 'candidate', 'Priya Sharma'),
   ('00000000-0000-0000-0000-000000000004', 'candidate', 'Rahul Gupta'),
   ('00000000-0000-0000-0000-000000000005', 'candidate', 'Sneha Patel')
 ON CONFLICT (id) DO UPDATE SET full_name = EXCLUDED.full_name;
 
--- Insert 3 Technical Jobs
+-- 3. Insert 3 Technical Jobs
 INSERT INTO public.jobs (id, recruiter_id, title, description, required_skills)
 VALUES
   (
@@ -43,7 +125,7 @@ VALUES
   )
 ON CONFLICT (id) DO NOTHING;
 
--- Insert Scored Demo Applications
+-- 4. Insert Scored Demo Applications
 INSERT INTO public.applications (candidate_id, job_id, resume_url, resume_text, match_score, match_summary, status)
 VALUES
   (
