@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { jobsApi } from '../lib/api.js';
+import { jobsApi, statsApi } from '../lib/api.js';
 import { useAuth } from '../components/AuthContext.jsx';
 import {
   Loading, EmptyState, ErrorAlert, SuccessAlert, SkillList, formatDate,
@@ -10,20 +10,28 @@ export default function RecruiterDashboard() {
   const { user }   = useAuth();
   const navigate   = useNavigate();
 
-  const [jobs, setJobs]         = useState([]);
+  const [jobs, setJobs]               = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
-  const [jobsError, setJobsError] = useState('');
-  const [seeding, setSeeding]     = useState(false);
+  const [jobsError, setJobsError]     = useState('');
+  const [seeding, setSeeding]         = useState(false);
+
+  // Quick stats
+  const [stats, setStats]       = useState(null);
+  const [loadingStats, setLoadingStats] = useState(true);
 
   // New job form
-  const [showForm, setShowForm]   = useState(false);
-  const [form, setForm]           = useState({ title: '', description: '', skills: '' });
-  const [posting, setPosting]     = useState(false);
-  const [postError, setPostError] = useState('');
+  const [showForm, setShowForm]     = useState(false);
+  const [form, setForm]             = useState({ title: '', description: '', skills: '' });
+  const [posting, setPosting]       = useState(false);
+  const [postError, setPostError]   = useState('');
   const [postSuccess, setPostSuccess] = useState('');
 
   useEffect(() => {
     fetchJobs();
+    statsApi.recruiter()
+      .then(d => setStats(d))
+      .catch(() => {}) // stats are decorative — don't break the page
+      .finally(() => setLoadingStats(false));
   }, [user]);
 
   async function fetchJobs() {
@@ -31,7 +39,6 @@ export default function RecruiterDashboard() {
     setJobsError('');
     try {
       const all  = await jobsApi.list();
-      // If recruiter has jobs of their own, show them, else show all jobs
       const mine = all.filter(j => j.profiles?.id === user?.id);
       setJobs(mine.length > 0 ? mine : all);
     } catch (err) {
@@ -47,6 +54,7 @@ export default function RecruiterDashboard() {
     try {
       await jobsApi.seed();
       fetchJobs();
+      statsApi.recruiter().then(d => setStats(d)).catch(() => {});
     } catch (err) {
       setJobsError(err.message);
     } finally {
@@ -90,7 +98,8 @@ export default function RecruiterDashboard() {
     <div className="page-wrapper">
       <div className="page-header">
         <h1>Recruiter Dashboard</h1>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <Link to="/analytics" className="btn btn-secondary">📊 Analytics</Link>
           <button
             className="btn btn-secondary"
             onClick={handleSeed}
@@ -109,9 +118,45 @@ export default function RecruiterDashboard() {
         </div>
       </div>
 
+      {/* ── Quick Stats Row ── */}
+      {!loadingStats && stats && (
+        <div className="stat-grid" style={{ marginBottom: 'var(--space-5)' }}>
+          <div className="stat-card" style={{ borderTopColor: '#6366f1' }}>
+            <div className="stat-card__icon">📋</div>
+            <div className="stat-card__body">
+              <div className="stat-card__value" style={{ color: '#6366f1' }}>{stats.totalJobs}</div>
+              <div className="stat-card__label">Jobs Posted</div>
+            </div>
+          </div>
+          <div className="stat-card" style={{ borderTopColor: '#3b82f6' }}>
+            <div className="stat-card__icon">👥</div>
+            <div className="stat-card__body">
+              <div className="stat-card__value" style={{ color: '#3b82f6' }}>{stats.totalApplicants}</div>
+              <div className="stat-card__label">Total Applicants</div>
+            </div>
+          </div>
+          <div className="stat-card" style={{ borderTopColor: '#10b981' }}>
+            <div className="stat-card__icon">✅</div>
+            <div className="stat-card__body">
+              <div className="stat-card__value" style={{ color: '#10b981' }}>{stats.statusBreakdown?.hired ?? 0}</div>
+              <div className="stat-card__label">Hired</div>
+            </div>
+          </div>
+          <div className="stat-card" style={{ borderTopColor: '#f59e0b' }}>
+            <div className="stat-card__icon">🤖</div>
+            <div className="stat-card__body">
+              <div className="stat-card__value" style={{ color: '#f59e0b' }}>
+                {stats.avgScore != null ? `${stats.avgScore}` : '—'}
+              </div>
+              <div className="stat-card__label">Avg AI Score</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SuccessAlert message={postSuccess} />
 
-      {/* ── Post New Job Form ──────────────────────────────────────────── */}
+      {/* ── Post New Job Form ── */}
       {showForm && (
         <div className="panel" style={{ marginBottom: 'var(--space-5)' }}>
           <div className="panel-title">New Job Posting</div>
@@ -179,7 +224,7 @@ export default function RecruiterDashboard() {
         </div>
       )}
 
-      {/* ── Jobs Table ───────────────────────────────────────────────────── */}
+      {/* ── Jobs Table ── */}
       <div className="panel-title" style={{ marginBottom: 'var(--space-3)' }}>
         Your Job Postings
       </div>

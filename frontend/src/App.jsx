@@ -11,7 +11,9 @@ import JobList             from './pages/JobList.jsx';
 import JobDetail           from './pages/JobDetail.jsx';
 import RecruiterDashboard  from './pages/RecruiterDashboard.jsx';
 import RecruiterApplicants from './pages/RecruiterApplicants.jsx';
+import RecruiterAnalytics  from './pages/RecruiterAnalytics.jsx';
 import CandidateDashboard  from './pages/CandidateDashboard.jsx';
+import ProfilePage         from './pages/ProfilePage.jsx';
 
 export default function App() {
   return (
@@ -31,6 +33,9 @@ export default function App() {
           <Route path="/jobs/:id" element={
             <ProtectedRoute><JobDetail /></ProtectedRoute>
           } />
+          <Route path="/profile" element={
+            <ProtectedRoute><ProfilePage /></ProtectedRoute>
+          } />
 
           {/* Recruiter-only */}
           <Route path="/dashboard/recruiter" element={
@@ -38,6 +43,9 @@ export default function App() {
           } />
           <Route path="/dashboard/recruiter/jobs/:id" element={
             <ProtectedRoute role="recruiter"><RecruiterApplicants /></ProtectedRoute>
+          } />
+          <Route path="/analytics" element={
+            <ProtectedRoute role="recruiter"><RecruiterAnalytics /></ProtectedRoute>
           } />
 
           {/* Candidate-only */}

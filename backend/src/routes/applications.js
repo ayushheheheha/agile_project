@@ -234,4 +234,50 @@ router.patch('/:id/status', requireAuth, requireRole('recruiter'), async (req, r
   }
 });
 
+// ── PATCH /api/applications/:id/notes ────────────────────────────────────────
+/**
+ * Recruiter adds/updates private notes for an application.
+ * Body: { notes: string }
+ */
+router.patch('/:id/notes', requireAuth, requireRole('recruiter'), async (req, res, next) => {
+  try {
+    const { notes } = req.body;
+
+    if (notes === undefined) {
+      return res.status(400).json({ error: 'notes field is required' });
+    }
+
+    // Verify recruiter owns the job associated with this application
+    const { data: application, error: fetchError } = await supabaseAdmin
+      .from('applications')
+      .select(`id, jobs!applications_job_id_fkey (id, recruiter_id)`)
+      .eq('id', req.params.id)
+      .single();
+
+    if (fetchError || !application) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    if (application.jobs.recruiter_id !== req.user.id) {
+      return res.status(403).json({ error: 'You do not own the job for this application' });
+    }
+
+    const { data: updated, error: updateError } = await supabaseAdmin
+      .from('applications')
+      .update({ recruiter_notes: notes })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      return res.status(500).json({ error: updateError.message });
+    }
+
+    return res.json(updated);
+
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

@@ -11,6 +11,8 @@ const cors       = require('cors');
 const authRoutes         = require('./routes/auth');
 const jobRoutes          = require('./routes/jobs');
 const applicationRoutes  = require('./routes/applications');
+const statsRoutes        = require('./routes/stats');
+const profileRoutes      = require('./routes/profile');
 
 const app = express();
 
@@ -37,6 +39,8 @@ app.get('/health', (_req, res) => {
 app.use('/api/auth',         authRoutes);
 app.use('/api/jobs',         jobRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/stats',        statsRoutes);
+app.use('/api/profile',      profileRoutes);
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err, _req, res, _next) => {

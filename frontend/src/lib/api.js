@@ -109,4 +109,25 @@ export const applicationsApi = {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     }),
+
+  updateNotes: (applicationId, notes) =>
+    apiFetch(`/applications/${applicationId}/notes`, {
+      method: 'PATCH',
+      body: JSON.stringify({ notes }),
+    }),
 };
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+
+export const statsApi = {
+  recruiter: () => apiFetch('/stats/recruiter'),
+  candidate: () => apiFetch('/stats/candidate'),
+};
+
+// ── Profile ───────────────────────────────────────────────────────────────────
+
+export const profileApi = {
+  get:    ()     => apiFetch('/profile'),
+  update: (body) => apiFetch('/profile', { method: 'PATCH', body: JSON.stringify(body) }),
+};
+

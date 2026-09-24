@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arjun Mehta — Software Engineer Resume</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      background: #f5f5f5;
+      padding: 32px 16px;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 48px 52px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      border-radius: 4px;
+    }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 26pt;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0f0f0f;
+    }
+
+    .header .title {
+      font-size: 11pt;
+      font-weight: 500;
+      color: #3b5bdb;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 10px;
+      font-size: 9pt;
+      color: #444;
+    }
+
+    .contact-row span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-row a {
+      color: #3b5bdb;
+      text-decoration: none;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #3b5bdb;
+      border-bottom: 1px solid #dde1ff;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Experience ── */
+    .entry {
+      margin-bottom: 16px;
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .entry-org {
+      font-weight: 600;
+      font-size: 10.5pt;
+    }
+
+    .entry-role {
+      font-size: 10pt;
+      font-weight: 500;
+      color: #333;
+      margin-top: 1px;
+    }
+
+    .entry-date {
+      font-size: 9pt;
+      color: #666;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .entry ul {
+      margin-top: 6px;
+      padding-left: 18px;
+      color: #2a2a2a;
+    }
+
+    .entry ul li {
+      margin-bottom: 3px;
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 24px;
+    }
+
+    .skill-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-cat {
+      font-weight: 600;
+      font-size: 9pt;
+      min-width: 110px;
+      color: #333;
+    }
+
+    .skill-list {
+      font-size: 9pt;
+      color: #555;
+    }
+
+    /* ── Education ── */
+    .edu-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .edu-degree {
+      font-weight: 600;
+    }
+
+    .edu-school {
+      font-size: 9.5pt;
+      color: #444;
+    }
+
+    /* ── Projects ── */
+    .project-entry {
+      margin-bottom: 12px;
+    }
+
+    .project-title {
+      font-weight: 600;
+    }
+
+    .project-tech {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 8.5pt;
+      color: #666;
+      font-style: italic;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; padding: 36px 40px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <h1>Arjun Mehta</h1>
+    <div class="title">Full-Stack Software Engineer · 4 Years Experience</div>
+    <div class="contact-row">
+      <span>📧 <a href="mailto:arjun.mehta@email.com">arjun.mehta@email.com</a></span>
+      <span>📞 +91 98765 43210</span>
+      <span>🔗 <a href="https://linkedin.com/in/arjunmehta" target="_blank">linkedin.com/in/arjunmehta</a></span>
+      <span>💻 <a href="https://github.com/arjunmehta-dev" target="_blank">github.com/arjunmehta-dev</a></span>
+      <span>📍 Bengaluru, India (Open to Remote)</span>
+    </div>
+  </div>
+
+  <!-- ── SUMMARY ── -->
+  <div class="section">
+    <div class="section-title">Professional Summary</div>
+    <p style="color:#2a2a2a; font-size:10pt;">
+      Full-Stack Engineer with 4 years of experience building scalable APIs, cloud-native microservices,
+      and responsive React front-ends. Strong background in Node.js, PostgreSQL, Docker, and AWS.
+      Passionate about clean architecture, test-driven development, and DevOps automation. Seeking a
+      senior engineering role where I can drive product impact at scale.
+    </p>
+  </div>
+
+  <!-- ── SKILLS ── -->
+  <div class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-row">
+        <span class="skill-cat">Languages</span>
+        <span class="skill-list">JavaScript (ES2022), TypeScript, Python, SQL</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Backend</span>
+        <span class="skill-list">Node.js, Express.js, REST APIs, GraphQL</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Frontend</span>
+        <span class="skill-list">React, Next.js, Vite, TailwindCSS</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Databases</span>
+        <span class="skill-list">PostgreSQL, Supabase, Redis, MongoDB</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">DevOps / Cloud</span>
+        <span class="skill-list">Docker, Docker Compose, GitHub Actions, AWS (EC2, S3, RDS)</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Testing</span>
+        <span class="skill-list">Jest, Supertest, Cypress, Playwright</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXPERIENCE ── -->
+  <div class="section">
+    <div class="section-title">Work Experience</div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">Razorpay · Bengaluru</div>
+          <div class="entry-role">Senior Software Engineer — Payments Platform</div>
+        </div>
+        <div class="entry-date">Jul 2023 – Present</div>
+      </div>
+      <ul>
+        <li>Designed and owned the payment-retry microservice handling <strong>8 M+ transactions/day</strong>, reducing false decline rate by 14%.</li>
+        <li>Migrated a monolithic Node.js API to Docker-based microservices, cutting deployment time from 40 min to 6 min via GitHub Actions CI/CD.</li>
+        <li>Built a real-time webhook event dashboard (React + WebSocket) used by 1 200+ merchant integrations.</li>
+        <li>Led a team of 3 engineers; ran sprint planning, PR reviews, and production on-call rotations.</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">Freshworks · Chennai</div>
+          <div class="entry-role">Software Engineer — CRM Backend</div>
+        </div>
+        <div class="entry-date">Aug 2021 – Jun 2023</div>
+      </div>
+      <ul>
+        <li>Built RESTful APIs for the Freshsales CRM using Node.js + Express, serving 50 K+ concurrent users.</li>
+        <li>Improved query performance by 3× by introducing PostgreSQL partial indexes and query plan analysis.</li>
+        <li>Implemented automated integration tests with Jest + Supertest, raising branch coverage from 48% to 81%.</li>
+        <li>Containerised local development environment with Docker Compose, onboarding new devs 4× faster.</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">HashedIn by Deloitte · Bengaluru</div>
+          <div class="entry-role">Software Engineer Intern → Junior Engineer</div>
+        </div>
+        <div class="entry-date">Jan 2021 – Jul 2021</div>
+      </div>
+      <ul>
+        <li>Developed React components for a US healthcare portal, reducing load time by 30% via code-splitting.</li>
+        <li>Wrote Terraform scripts to provision AWS infrastructure (EC2, RDS, S3) for a client project.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── PROJECTS ── -->
+  <div class="section">
+    <div class="section-title">Personal Projects</div>
+
+    <div class="project-entry">
+      <span class="project-title">DevPulse</span>
+      <span class="project-tech">Node.js · PostgreSQL · React · Docker · GitHub Actions</span>
+      <ul style="padding-left:18px; margin-top:4px; color:#2a2a2a;">
+        <li>Open-source developer activity tracker; 420+ GitHub stars. Aggregates commits, PRs, and reviews into a team dashboard.</li>
+        <li>Fully Dockerised with multi-stage builds; CI/CD pipeline publishes to GHCR on every merge to main.</li>
+      </ul>
+    </div>
+
+    <div class="project-entry">
+      <span class="project-title">QuickInvoice API</span>
+      <span class="project-tech">Express.js · Supabase · PDF generation · Stripe</span>
+      <ul style="padding-left:18px; margin-top:4px; color:#2a2a2a;">
+        <li>SaaS invoice generator with Stripe payment collection; 300+ active freelancer users.</li>
+        <li>Deployed on AWS EC2 behind a load balancer; 99.8% uptime over 18 months.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── EDUCATION ── -->
+  <div class="section">
+    <div class="section-title">Education</div>
+    <div class="edu-entry">
+      <div>
+        <div class="edu-degree">B.Tech, Computer Science & Engineering</div>
+        <div class="edu-school">PES University, Bengaluru</div>
+      </div>
+      <div class="entry-date">2017 – 2021 · CGPA 8.7/10</div>
+    </div>
+  </div>
+
+  <!-- ── CERTIFICATIONS ── -->
+  <div class="section">
+    <div class="section-title">Certifications</div>
+    <ul style="padding-left:18px; color:#2a2a2a;">
+      <li>AWS Certified Developer – Associate (2023)</li>
+      <li>Docker Certified Associate (2022)</li>
+      <li>Meta Back-End Developer Professional Certificate — Coursera (2021)</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

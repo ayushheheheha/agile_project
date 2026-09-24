@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arjun Mehta — Machine Learning Engineer Resume</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      background: #f5f5f5;
+      padding: 32px 16px;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 48px 52px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      border-radius: 4px;
+    }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 26pt;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0f0f0f;
+    }
+
+    .header .title {
+      font-size: 11pt;
+      font-weight: 500;
+      color: #2f9e44;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 10px;
+      font-size: 9pt;
+      color: #444;
+    }
+
+    .contact-row span { display: flex; align-items: center; gap: 4px; }
+    .contact-row a { color: #2f9e44; text-decoration: none; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 22px; }
+
+    .section-title {
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #2f9e44;
+      border-bottom: 1px solid #d3f9d8;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Experience ── */
+    .entry { margin-bottom: 16px; }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .entry-org   { font-weight: 600; font-size: 10.5pt; }
+    .entry-role  { font-size: 10pt; font-weight: 500; color: #333; margin-top: 1px; }
+    .entry-date  { font-size: 9pt; color: #666; white-space: nowrap; flex-shrink: 0; }
+
+    .entry ul { margin-top: 6px; padding-left: 18px; color: #2a2a2a; }
+    .entry ul li { margin-bottom: 3px; }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 24px;
+    }
+
+    .skill-row   { display: flex; align-items: flex-start; gap: 8px; }
+    .skill-cat   { font-weight: 600; font-size: 9pt; min-width: 120px; color: #333; flex-shrink: 0; }
+    .skill-list  { font-size: 9pt; color: #555; }
+
+    /* ── Education ── */
+    .edu-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .edu-degree { font-weight: 600; }
+    .edu-school { font-size: 9.5pt; color: #444; }
+
+    /* ── Projects ── */
+    .project-entry { margin-bottom: 12px; }
+    .project-title { font-weight: 600; }
+    .project-tech  { display: inline-block; margin-left: 6px; font-size: 8.5pt; color: #666; font-style: italic; }
+
+    /* ── Highlight pill for key skills (to make AI scanner happy) ── */
+    .pill {
+      display: inline-block;
+      background: #d3f9d8;
+      color: #1a6629;
+      font-size: 8pt;
+      font-weight: 600;
+      border-radius: 3px;
+      padding: 0 5px;
+      margin: 0 2px;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; padding: 36px 40px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <h1>Arjun Mehta</h1>
+    <div class="title">Machine Learning Engineer · NLP &amp; Predictive Modelling · 4 Years</div>
+    <div class="contact-row">
+      <span>📧 <a href="mailto:arjun.mehta@email.com">arjun.mehta@email.com</a></span>
+      <span>📞 +91 98765 43210</span>
+      <span>🔗 <a href="https://linkedin.com/in/arjunmehta-ml" target="_blank">linkedin.com/in/arjunmehta-ml</a></span>
+      <span>💻 <a href="https://github.com/arjunmehta-ml" target="_blank">github.com/arjunmehta-ml</a></span>
+      <span>📍 Bengaluru, India (Open to Remote)</span>
+    </div>
+  </div>
+
+  <!-- ── SUMMARY ── -->
+  <div class="section">
+    <div class="section-title">Professional Summary</div>
+    <p style="color:#2a2a2a; font-size:10pt;">
+      Machine Learning Engineer with 4 years of hands-on experience designing, training, and deploying NLP
+      and predictive models in production environments. Proficient in <strong>Python</strong>,
+      <strong>PyTorch</strong>, and <strong>scikit-learn</strong>; experienced with
+      <strong>MLflow</strong> experiment tracking, <strong>FastAPI</strong> model serving, and
+      <strong>GCP</strong> cloud infrastructure. Passionate about bridging research and production —
+      building ML systems that are reproducible, observable, and scalable.
+    </p>
+  </div>
+
+  <!-- ── SKILLS ── -->
+  <div class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-row">
+        <span class="skill-cat">Languages</span>
+        <span class="skill-list">Python (primary), SQL, Bash, JavaScript</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">ML / DL Frameworks</span>
+        <span class="skill-list">PyTorch, scikit-learn, HuggingFace Transformers, XGBoost, LightGBM</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">NLP</span>
+        <span class="skill-list">Text classification, NER, Sentence Embeddings, Fine-tuning BERT/RoBERTa</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">MLOps</span>
+        <span class="skill-list">MLflow (tracking, registry, model serving), DVC, Weights &amp; Biases</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Model Serving</span>
+        <span class="skill-list">FastAPI, TorchServe, BentoML, Docker</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Cloud / Infra</span>
+        <span class="skill-list">GCP (Vertex AI, Cloud Run, BigQuery, GCS), AWS S3 &amp; EC2</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">Databases</span>
+        <span class="skill-list">PostgreSQL, SQL, BigQuery, Redis feature store</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-cat">DevOps</span>
+        <span class="skill-list">GitHub Actions CI/CD, Docker, Kubernetes (basic), Terraform</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXPERIENCE ── -->
+  <div class="section">
+    <div class="section-title">Work Experience</div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">PhonePe · Bengaluru</div>
+          <div class="entry-role">Machine Learning Engineer — Risk &amp; Fraud Intelligence</div>
+        </div>
+        <div class="entry-date">Aug 2023 – Present</div>
+      </div>
+      <ul>
+        <li>
+          Built an end-to-end <strong>NLP</strong> pipeline using <strong>PyTorch</strong> +
+          HuggingFace to classify merchant dispute descriptions, reducing manual review queue by 38%.
+        </li>
+        <li>
+          Developed and deployed 6 fraud-detection models with <strong>scikit-learn</strong> and
+          XGBoost; tracked all experiments with <strong>MLflow</strong> (100+ registered model
+          versions); pushed best models to <strong>GCP Vertex AI</strong> endpoints.
+        </li>
+        <li>
+          Served inference via <strong>FastAPI</strong> microservices on <strong>GCP</strong>
+          Cloud Run; latency p95 &lt; 40 ms at 2 000 req/s peak traffic.
+        </li>
+        <li>
+          Maintained feature store backed by <strong>PostgreSQL</strong> + Redis; wrote complex
+          <strong>SQL</strong> pipelines on BigQuery for training data extraction.
+        </li>
+        <li>
+          Mentored 2 junior ML engineers; ran weekly model review and A/B test readouts.
+        </li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">Sigmoid Analytics · Bengaluru</div>
+          <div class="entry-role">Data Scientist → ML Engineer</div>
+        </div>
+        <div class="entry-date">Jul 2021 – Jul 2023</div>
+      </div>
+      <ul>
+        <li>
+          Delivered NLP-powered ticket routing system for a Fortune 500 retail client:
+          fine-tuned RoBERTa with <strong>PyTorch</strong>, served via <strong>FastAPI</strong>
+          on <strong>GCP</strong> Cloud Run; 91% accuracy on 42-class classification.
+        </li>
+        <li>
+          Built demand-forecasting pipeline using <strong>scikit-learn</strong> + LightGBM;
+          managed 30+ feature engineering experiments tracked end-to-end in <strong>MLflow</strong>.
+        </li>
+        <li>
+          Automated model retraining on GCP Vertex Pipelines; models retrained weekly from
+          BigQuery <strong>SQL</strong> feature snapshots with zero manual intervention.
+        </li>
+        <li>
+          Containerised all ML services with Docker; wrote GitHub Actions workflows for CI/CD
+          into GCP Artifact Registry.
+        </li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <div class="entry-org">Saama Technologies · Chennai</div>
+          <div class="entry-role">Data Science Intern → Associate Data Scientist</div>
+        </div>
+        <div class="entry-date">Jan 2021 – Jun 2021</div>
+      </div>
+      <ul>
+        <li>
+          Built text extraction pipeline (spaCy + regex) for clinical trial PDFs;
+          reduced labelling effort by 60% using <strong>NLP</strong>-assisted pre-annotation.
+        </li>
+        <li>
+          Trained <strong>scikit-learn</strong> survival models on patient outcome data using
+          <strong>SQL</strong>-extracted cohorts from PostgreSQL; achieved 0.76 C-index.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── PROJECTS ── -->
+  <div class="section">
+    <div class="section-title">Personal Projects</div>
+
+    <div class="project-entry">
+      <span class="project-title">SentimentLens</span>
+      <span class="project-tech">PyTorch · HuggingFace · FastAPI · MLflow · GCP Cloud Run · Docker</span>
+      <ul style="padding-left:18px; margin-top:4px; color:#2a2a2a;">
+        <li>Open-source real-time sentiment analysis API; 600+ GitHub stars. Fine-tuned DistilBERT on
+          <strong>PyTorch</strong> for product review classification (94% F1).</li>
+        <li>Full MLOps stack: <strong>MLflow</strong> experiment tracking → model registry → automated
+          deployment to <strong>GCP</strong> Cloud Run via GitHub Actions.</li>
+        <li>API served with <strong>FastAPI</strong>; handles 500 req/s with async batching.</li>
+      </ul>
+    </div>
+
+    <div class="project-entry">
+      <span class="project-title">ResumeRank</span>
+      <span class="project-tech">Python · scikit-learn · NLP · PostgreSQL · FastAPI</span>
+      <ul style="padding-left:18px; margin-top:4px; color:#2a2a2a;">
+        <li>Automated resume screener using TF-IDF + cosine similarity (<strong>scikit-learn</strong>)
+          and a fine-tuned BERT bi-encoder (<strong>PyTorch</strong>) for semantic skill matching.</li>
+        <li>REST API built with <strong>FastAPI</strong>; candidate rankings stored in
+          <strong>PostgreSQL</strong> via <strong>SQL</strong> queries; used by 3 hiring managers.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── EDUCATION ── -->
+  <div class="section">
+    <div class="section-title">Education</div>
+    <div class="edu-entry">
+      <div>
+        <div class="edu-degree">B.Tech, Computer Science &amp; Engineering (Machine Learning Elective Track)</div>
+        <div class="edu-school">PES University, Bengaluru</div>
+      </div>
+      <div class="entry-date">2017 – 2021 · CGPA 8.9/10</div>
+    </div>
+    <div class="edu-entry">
+      <div>
+        <div class="edu-degree">Deep Learning Specialization (5-course)</div>
+        <div class="edu-school">Coursera · deeplearning.ai (Andrew Ng)</div>
+      </div>
+      <div class="entry-date">Completed 2021</div>
+    </div>
+  </div>
+
+  <!-- ── CERTIFICATIONS ── -->
+  <div class="section">
+    <div class="section-title">Certifications</div>
+    <ul style="padding-left:18px; color:#2a2a2a;">
+      <li>Google Cloud Professional Machine Learning Engineer (2024)</li>
+      <li>MLflow Certified Practitioner — Databricks (2023)</li>
+      <li>AWS Certified Machine Learning – Specialty (2022)</li>
+      <li>PyTorch Developer Certificate — Meta AI (2022)</li>
+    </ul>
+  </div>
+
+  <!-- ── PUBLICATIONS ── -->
+  <div class="section">
+    <div class="section-title">Publications &amp; Talks</div>
+    <ul style="padding-left:18px; color:#2a2a2a;">
+      <li>"Scalable NLP Pipelines with FastAPI and GCP Vertex AI" — PyCon India 2023 (talk)</li>
+      <li>"Efficient MLflow Experiment Tracking for PyTorch Workflows" — Towards Data Science (2022, 4.2k reads)</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

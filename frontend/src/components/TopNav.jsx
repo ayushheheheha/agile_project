@@ -13,7 +13,9 @@ export default function TopNav() {
 
   return (
     <nav className="topnav">
-      <span className="topnav__brand">Hire<span>Signal</span></span>
+      <NavLink to="/jobs" className="topnav__brand" style={{ textDecoration: 'none' }}>
+        Hire<span>Signal</span>
+      </NavLink>
 
       {user && (
         <div className="topnav__links">
@@ -25,12 +27,20 @@ export default function TopNav() {
           </NavLink>
 
           {profile?.role === 'recruiter' && (
-            <NavLink
-              to="/dashboard/recruiter"
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Dashboard
-            </NavLink>
+            <>
+              <NavLink
+                to="/dashboard/recruiter"
+                className={({ isActive }) => isActive ? 'active' : ''}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/analytics"
+                className={({ isActive }) => isActive ? 'active' : ''}
+              >
+                Analytics
+              </NavLink>
+            </>
           )}
 
           {profile?.role === 'candidate' && (
@@ -47,6 +57,13 @@ export default function TopNav() {
       <div className="topnav__right">
         {user ? (
           <>
+            <NavLink
+              to="/profile"
+              className="topnav__avatar"
+              title="Edit profile"
+            >
+              {(profile?.full_name || user.email || '?')[0].toUpperCase()}
+            </NavLink>
             <span className="topnav__user">
               {profile?.full_name || user.email}
               {profile?.role && (
