@@ -177,4 +177,37 @@ router.get('/:id/applications', requireAuth, requireRole('recruiter'), async (re
   }
 });
 
+// ── POST /api/jobs/seed ───────────────────────────────────────────────────────
+/**
+ * Endpoint to seed demo jobs & candidates on demand.
+ */
+router.post('/seed', async (req, res, next) => {
+  try {
+    const { seed } = require('../../seed');
+    let recruiterId = null;
+
+    const authHeader = req.headers.authorization || '';
+    if (authHeader.startsWith('Bearer ')) {
+      const token = authHeader.slice(7);
+      const { supabaseAnon, supabaseAdmin } = require('../services/supabaseClient');
+      const { data } = await supabaseAnon.auth.getUser(token);
+      if (data?.user?.id) {
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        if (profile?.role === 'recruiter') {
+          recruiterId = data.user.id;
+        }
+      }
+    }
+
+    await seed(recruiterId);
+    return res.json({ success: true, message: 'Demo data seeded successfully' });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

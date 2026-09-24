@@ -9,7 +9,8 @@
     "test": "jest --forceExit --detectOpenHandles",
     "test:coverage": "jest --coverage --forceExit --detectOpenHandles",
     "lint": "eslint src/ tests/",
-    "simulate": "node simulate.js"
+    "simulate": "node simulate.js",
+    "seed": "node seed.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

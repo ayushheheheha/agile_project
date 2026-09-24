@@ -13,6 +13,7 @@ export default function RecruiterDashboard() {
   const [jobs, setJobs]         = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [jobsError, setJobsError] = useState('');
+  const [seeding, setSeeding]     = useState(false);
 
   // New job form
   const [showForm, setShowForm]   = useState(false);
@@ -23,20 +24,33 @@ export default function RecruiterDashboard() {
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [user]);
 
   async function fetchJobs() {
     setLoadingJobs(true);
     setJobsError('');
     try {
       const all  = await jobsApi.list();
-      // Filter to only this recruiter's jobs
+      // If recruiter has jobs of their own, show them, else show all jobs
       const mine = all.filter(j => j.profiles?.id === user?.id);
-      setJobs(mine);
+      setJobs(mine.length > 0 ? mine : all);
     } catch (err) {
       setJobsError(err.message);
     } finally {
       setLoadingJobs(false);
+    }
+  }
+
+  async function handleSeed() {
+    setSeeding(true);
+    setJobsError('');
+    try {
+      await jobsApi.seed();
+      fetchJobs();
+    } catch (err) {
+      setJobsError(err.message);
+    } finally {
+      setSeeding(false);
     }
   }
 
@@ -76,13 +90,23 @@ export default function RecruiterDashboard() {
     <div className="page-wrapper">
       <div className="page-header">
         <h1>Recruiter Dashboard</h1>
-        <button
-          id="post-job-btn"
-          className="btn btn-primary"
-          onClick={() => { setShowForm(s => !s); setPostError(''); setPostSuccess(''); }}
-        >
-          {showForm ? 'Cancel' : 'Post New Job'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className="btn btn-secondary"
+            onClick={handleSeed}
+            disabled={seeding}
+            title="Populate realistic demo jobs and applicants"
+          >
+            {seeding ? 'Seeding…' : '⚡ Load Demo Data'}
+          </button>
+          <button
+            id="post-job-btn"
+            className="btn btn-primary"
+            onClick={() => { setShowForm(s => !s); setPostError(''); setPostSuccess(''); }}
+          >
+            {showForm ? 'Cancel' : 'Post New Job'}
+          </button>
+        </div>
       </div>
 
       <SuccessAlert message={postSuccess} />
@@ -168,9 +192,14 @@ export default function RecruiterDashboard() {
         <EmptyState
           message="You haven't posted any jobs yet."
           action={
-            <button className="btn btn-secondary" onClick={() => setShowForm(true)}>
-              Post your first job
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button className="btn btn-secondary" onClick={handleSeed} disabled={seeding}>
+                {seeding ? 'Loading demo data…' : 'Load Demo Jobs & Applicants'}
+              </button>
+              <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+                Post your first job
+              </button>
+            </div>
           }
         />
       ) : (

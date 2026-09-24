@@ -9,16 +9,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
-    // Load initial session from localStorage (Supabase persists it)
+    // Load initial session from localStorage / Supabase
     supabase.auth.getSession().then(({ data }) => {
       setSession(data?.session || null);
+      if (data?.session?.access_token) {
+        localStorage.setItem('hs_access_token', data.session.access_token);
+      }
       setLoading(false);
     });
 
     // Subscribe to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
-      if (!newSession) {
+      if (newSession?.access_token) {
+        localStorage.setItem('hs_access_token', newSession.access_token);
+      } else if (!newSession) {
+        localStorage.removeItem('hs_access_token');
         setProfile(null);
       }
     });
@@ -62,6 +68,7 @@ export function AuthProvider({ children }) {
   }, [session]);
 
   function signOut() {
+    localStorage.removeItem('hs_access_token');
     sessionStorage.removeItem('hs_profile');
     supabase.auth.signOut();
     setProfile(null);
@@ -69,13 +76,20 @@ export function AuthProvider({ children }) {
   }
 
   /**
-   * After backend signup returns a session, manually set it in Supabase client.
+   * After backend signup/login returns a session, manually set it in Supabase client and localStorage.
    */
   async function setSessionFromBackend(sessionData, profileData) {
-    await supabase.auth.setSession({
-      access_token:  sessionData.access_token,
-      refresh_token: sessionData.refresh_token,
-    });
+    if (sessionData?.access_token) {
+      localStorage.setItem('hs_access_token', sessionData.access_token);
+    }
+    try {
+      await supabase.auth.setSession({
+        access_token:  sessionData.access_token,
+        refresh_token: sessionData.refresh_token,
+      });
+    } catch (e) {
+      console.warn('[setSessionFromBackend] supabase setSession notice:', e);
+    }
     setSession(sessionData);
     setProfile(profileData);
     sessionStorage.setItem('hs_profile', JSON.stringify(profileData));

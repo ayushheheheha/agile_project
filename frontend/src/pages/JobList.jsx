@@ -5,16 +5,35 @@ import { Loading, EmptyState, ErrorAlert, SkillList, formatDate } from '../compo
 
 export default function JobList() {
   const navigate = useNavigate();
-  const [jobs, setJobs]     = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState('');
+  const [jobs, setJobs]         = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState('');
+  const [seeding, setSeeding]   = useState(false);
 
   useEffect(() => {
+    loadJobs();
+  }, []);
+
+  function loadJobs() {
+    setLoading(true);
     jobsApi.list()
       .then(data => setJobs(data))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }
+
+  async function handleSeed() {
+    setSeeding(true);
+    setError('');
+    try {
+      await jobsApi.seed();
+      loadJobs();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   if (loading) return (
     <div className="page-wrapper">
@@ -25,14 +44,31 @@ export default function JobList() {
   return (
     <div className="page-wrapper">
       <div className="page-header">
-        <h1>Open Positions</h1>
-        <span className="text-muted text-sm">{jobs.length} job{jobs.length !== 1 ? 's' : ''}</span>
+        <div>
+          <h1>Open Positions</h1>
+          <span className="text-muted text-sm">{jobs.length} job{jobs.length !== 1 ? 's' : ''}</span>
+        </div>
+        <button
+          className="btn btn-secondary"
+          onClick={handleSeed}
+          disabled={seeding}
+          title="Populate realistic demo jobs and applicants"
+        >
+          {seeding ? 'Seeding…' : '⚡ Load Demo Data'}
+        </button>
       </div>
 
       <ErrorAlert message={error} />
 
       {jobs.length === 0 ? (
-        <EmptyState message="No jobs posted yet. Check back later." />
+        <EmptyState
+          message="No jobs posted yet."
+          action={
+            <button className="btn btn-primary" onClick={handleSeed} disabled={seeding}>
+              {seeding ? 'Loading demo jobs…' : 'Load Demo Jobs'}
+            </button>
+          }
+        />
       ) : (
         <div className="data-table-wrap">
           <table className="data-table" id="jobs-table">

@@ -10,13 +10,24 @@ const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 /**
  * Get the current Supabase session token.
- * Imported lazily to avoid circular deps.
+ * Checks localStorage first, then falls back to Supabase client session.
  */
 async function getToken() {
-  // Dynamic import to avoid circular dependency with supabaseClient.js
-  const { supabase } = await import('./supabaseClient.js');
-  const { data } = await supabase.auth.getSession();
-  return data?.session?.access_token || null;
+  const localToken = localStorage.getItem('hs_access_token');
+  if (localToken) return localToken;
+
+  try {
+    const { supabase } = await import('./supabaseClient.js');
+    const { data } = await supabase.auth.getSession();
+    const token = data?.session?.access_token || null;
+    if (token) {
+      localStorage.setItem('hs_access_token', token);
+    }
+    return token;
+  } catch (err) {
+    console.warn('[getToken] error fetching session:', err);
+    return null;
+  }
 }
 
 /**
@@ -73,6 +84,7 @@ export const jobsApi = {
   get:        (id)     => apiFetch(`/jobs/${id}`),
   create:     (body)   => apiFetch('/jobs', { method: 'POST', body: JSON.stringify(body) }),
   applicants: (jobId)  => apiFetch(`/jobs/${jobId}/applications`),
+  seed:       ()       => apiFetch('/jobs/seed', { method: 'POST' }),
 };
 
 // ── Applications ──────────────────────────────────────────────────────────────
