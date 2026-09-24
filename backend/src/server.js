@@ -1,5 +1,8 @@
 'use strict';
 
+const path = require('path');
+// Load .env from project root (single .env file), fallback to cwd
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 require('dotenv').config();
 
 const express    = require('express');

@@ -85,22 +85,22 @@ The project is deliberately built with a dense, functional UI (no gradients, no 
 
 > **Free Tier Note:** The free tier of Gemini 1.5 Flash has rate limits (~15 RPM, 1M TPM). If you hit rate limits during a demo, the scoring service automatically falls back to a local keyword-overlap scorer, so the application still completes. See [Rate Limits & Fallback](#gemini-rate-limits--fallback-scoring) below.
 
-### 3. Configure Environment
+### 3. Configure Environment (Single `.env` in Project Root)
+
+You only need **one** `.env` file placed at the root of the project. Both backend and frontend automatically load from it:
 
 ```bash
-# Copy the example env file
+# In the project root:
 cp .env.example .env
-
-# Edit .env and fill in all values:
-#   SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY
 ```
 
-Also create a `frontend/.env` for local development (not needed for Docker):
-```env
-VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-VITE_API_URL=/api
-```
+Open `.env` and fill in your Supabase credentials:
+- `SUPABASE_URL` and `VITE_SUPABASE_URL` (same URL)
+- `SUPABASE_ANON_KEY` and `VITE_SUPABASE_ANON_KEY` (same public anon key)
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `GEMINI_API_KEY` (optional — omit or leave blank to use the built-in local scorer)
+
+---
 
 ### 4. Run with Docker Compose
 
@@ -114,24 +114,25 @@ docker-compose up --build
 
 The nginx frontend container proxies all `/api/*` requests to the backend container automatically.
 
+---
+
 ### 5. Run Locally (Without Docker)
 
-**Backend:**
+Open two terminals from the project root:
+
+**Terminal 1 — Backend:**
 ```bash
 cd backend
-npm install
-# Copy .env.example to .env and fill values
-cp .env.example .env
-npm run dev     # starts on port 4000 with nodemon
+npm run dev     # starts on port 4000 (loads root .env automatically)
 ```
 
-**Frontend:**
+**Terminal 2 — Frontend:**
 ```bash
 cd frontend
-npm install
-# Create frontend/.env with VITE_ prefixed vars
-npm run dev     # starts on port 5173 (proxies /api → localhost:4000)
+npm run dev     # starts on port 5173 (loads root .env automatically, proxies /api -> localhost:4000)
 ```
+
+Visit **http://localhost:5173** in your browser.
 
 ---
 
