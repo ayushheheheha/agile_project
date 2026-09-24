@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { applicationsApi, jobsApi, statsApi } from '../lib/api.js';
 import {
@@ -19,18 +19,117 @@ const STATUS_COLOR = {
   rejected: '#ef4444',
 };
 
+/**
+ * Inline resume re-upload widget — shown only on pending applications.
+ */
+function ChangeResumeWidget({ appId, onUpdated }) {
+  const fileRef  = useRef(null);
+  const [open, setOpen]       = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError]     = useState('');
+  const [result, setResult]   = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    setResult(null);
+
+    const file = fileRef.current?.files?.[0];
+    if (!file) { setError('Please select a PDF file'); return; }
+    if (file.type !== 'application/pdf') { setError('Only PDF files are accepted'); return; }
+
+    setUploading(true);
+    try {
+      const updated = await applicationsApi.changeResume(appId, file);
+      setResult(updated);
+      onUpdated(updated);          // bubble up to refresh the row
+      if (fileRef.current) fileRef.current.value = '';
+    } catch (err) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  if (result) {
+    return (
+      <div className="change-resume-success">
+        <span className="change-resume-success__icon">✅</span>
+        <span>
+          Resume updated! New score: <strong>{result.match_score != null ? Math.round(result.match_score) : '—'}</strong>
+        </span>
+        <button
+          className="change-resume-again"
+          onClick={() => { setResult(null); setOpen(true); }}
+        >
+          Change again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="change-resume-wrap">
+      {!open ? (
+        <button
+          className="btn-change-resume"
+          onClick={() => setOpen(true)}
+          title="Re-upload your resume and get a new AI score"
+        >
+          📎 Change Resume
+        </button>
+      ) : (
+        <form onSubmit={handleSubmit} className="change-resume-form" noValidate>
+          {error && (
+            <div className="change-resume-error">{error}</div>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/pdf"
+            className="change-resume-file"
+            id={`resume-change-${appId}`}
+          />
+          <div className="change-resume-actions">
+            <button
+              type="submit"
+              className="btn-change-resume btn-change-resume--submit"
+              disabled={uploading}
+            >
+              {uploading
+                ? <><span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} />Scoring…</>
+                : '✅ Upload & Re-score'
+              }
+            </button>
+            <button
+              type="button"
+              className="btn-change-resume btn-change-resume--cancel"
+              onClick={() => { setOpen(false); setError(''); }}
+              disabled={uploading}
+            >
+              Cancel
+            </button>
+          </div>
+          {uploading && (
+            <div className="change-resume-hint">
+              Analysing your new resume with AI — this may take 5–15 seconds…
+            </div>
+          )}
+        </form>
+      )}
+    </div>
+  );
+}
+
 export default function CandidateDashboard() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState('');
   const [seeding, setSeeding]           = useState(false);
-
   const [stats, setStats]               = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   function loadData() {
     setLoading(true);
@@ -57,6 +156,24 @@ export default function CandidateDashboard() {
     } finally {
       setSeeding(false);
     }
+  }
+
+  /** Called when a resume re-upload succeeds — update just that row in state */
+  function handleResumeUpdated(updated) {
+    setApplications(prev =>
+      prev.map(a =>
+        a.id === updated.id
+          ? {
+              ...a,
+              match_score:   updated.match_score,
+              match_summary: updated.match_summary,
+              resume_url:    updated.resume_url,
+            }
+          : a
+      )
+    );
+    // Refresh stats since score changed
+    statsApi.candidate().then(s => setStats(s)).catch(() => {});
   }
 
   const filteredApps = filterStatus
@@ -160,67 +277,69 @@ export default function CandidateDashboard() {
               <p>No applications with status "{filterStatus}".</p>
             </div>
           ) : (
-            <div className="data-table-wrap">
-              <table className="data-table" id="candidate-applications-table">
-                <thead>
-                  <tr>
-                    <th>Job Title</th>
-                    <th>Recruiter</th>
-                    <th>Applied</th>
-                    <th>AI Score</th>
-                    <th>Status</th>
-                    <th>Summary</th>
-                    <th>Resume</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredApps.map(app => (
-                    <tr key={app.id} className="no-hover">
-                      <td>
-                        <Link to={`/jobs/${app.jobs?.id}`}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              {filteredApps.map(app => (
+                <div key={app.id} className="applicant-card">
+                  {/* ── Row top: job info + score + status ── */}
+                  <div className="applicant-card__header">
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <Link
+                          to={`/jobs/${app.jobs?.id}`}
+                          style={{ fontWeight: 600, fontSize: 'var(--font-size-md)' }}
+                        >
                           {app.jobs?.title || '—'}
                         </Link>
-                      </td>
-                      <td className="text-muted">
-                        {app.jobs?.profiles?.full_name || '—'}
-                      </td>
-                      <td className="text-muted" style={{ whiteSpace: 'nowrap' }}>
-                        {formatDate(app.applied_at)}
-                      </td>
-                      <td>
-                        <ScoreBadge score={app.match_score} />
-                      </td>
-                      <td>
                         <span
                           className={`badge ${STATUS_CLASS[app.status] || ''}`}
                           style={{ borderLeft: `3px solid ${STATUS_COLOR[app.status] || '#475569'}` }}
                         >
                           {app.status}
                         </span>
-                      </td>
-                      <td style={{ maxWidth: 260 }}>
-                        <span className="text-sm text-muted">
-                          {app.match_summary || '—'}
-                        </span>
-                      </td>
-                      <td>
-                        {app.resume_url ? (
-                          <a
-                            href={app.resume_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm"
-                          >
-                            View
-                          </a>
-                        ) : (
-                          <span className="text-faint text-xs">—</span>
+                        {app.status === 'pending' && (
+                          <span className="pending-hint">· recruiter hasn't reviewed yet</span>
                         )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginTop: 3 }}>
+                        {app.jobs?.profiles?.full_name || '—'} · Applied {formatDate(app.applied_at)}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                      <ScoreBadge score={app.match_score} />
+                      {app.resume_url && (
+                        <a
+                          href={app.resume_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm"
+                          style={{ whiteSpace: 'nowrap' }}
+                        >
+                          📄 View Resume
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ── AI Summary ── */}
+                  {app.match_summary && (
+                    <div className="applicant-card__summary">
+                      <span className="text-xs text-muted" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        AI Analysis
+                      </span>
+                      <p className="text-sm" style={{ marginTop: 4 }}>{app.match_summary}</p>
+                    </div>
+                  )}
+
+                  {/* ── Change Resume widget (pending only) ── */}
+                  {app.status === 'pending' && (
+                    <ChangeResumeWidget
+                      appId={app.id}
+                      onUpdated={handleResumeUpdated}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </>

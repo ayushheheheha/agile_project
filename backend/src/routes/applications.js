@@ -280,4 +280,126 @@ router.patch('/:id/notes', requireAuth, requireRole('recruiter'), async (req, re
   }
 });
 
+// ── PATCH /api/applications/:id/resume ───────────────────────────────────────
+/**
+ * Candidate re-uploads their resume for a PENDING application.
+ * Only allowed while status = 'pending' (before recruiter review).
+ * Multipart form: { resume: File (PDF) }
+ *
+ * Steps:
+ *  1. Verify candidate owns the application and it is still pending
+ *  2. Extract text from new PDF
+ *  3. Replace the PDF in Supabase Storage
+ *  4. Re-run Gemini scoring
+ *  5. Update application row with new score/summary/url
+ */
+router.patch(
+  '/:id/resume',
+  requireAuth,
+  requireRole('candidate'),
+  upload.single('resume'),
+  async (req, res, next) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Resume PDF is required' });
+      }
+
+      // ── Fetch the existing application ────────────────────────────────────
+      const { data: existing, error: fetchErr } = await supabaseAdmin
+        .from('applications')
+        .select(`
+          id, candidate_id, status, job_id,
+          jobs!applications_job_id_fkey (
+            id, title, description, required_skills
+          )
+        `)
+        .eq('id', req.params.id)
+        .single();
+
+      if (fetchErr || !existing) {
+        return res.status(404).json({ error: 'Application not found' });
+      }
+
+      // ── Only the owner can update their application ───────────────────────
+      if (existing.candidate_id !== req.user.id) {
+        return res.status(403).json({ error: 'You do not own this application' });
+      }
+
+      // ── Only update while still pending ──────────────────────────────────
+      if (existing.status !== 'pending') {
+        return res.status(409).json({
+          error: `Resume can only be changed while status is "pending". Current status: "${existing.status}"`,
+        });
+      }
+
+      const job = existing.jobs;
+
+      // ── Extract PDF text ──────────────────────────────────────────────────
+      let resumeText = '';
+      try {
+        const pdfData = await pdfParse(req.file.buffer);
+        resumeText = pdfData.text || '';
+      } catch (pdfErr) {
+        console.warn('[applications/resume] PDF parse failed:', pdfErr.message);
+        resumeText = '';
+      }
+
+      // ── Upload new PDF to Supabase Storage (overwrite) ────────────────────
+      const fileName = `${req.user.id}/${job.id}/${Date.now()}.pdf`;
+      const { error: storageError } = await supabaseAdmin.storage
+        .from('resumes')
+        .upload(fileName, req.file.buffer, {
+          contentType: 'application/pdf',
+          upsert: true,
+        });
+
+      if (storageError) {
+        console.error('[applications/resume] Storage error:', storageError.message);
+      }
+
+      const { data: urlData } = supabaseAdmin.storage
+        .from('resumes')
+        .getPublicUrl(fileName);
+
+      const resumeUrl = storageError ? existing.resume_url : (urlData?.publicUrl || null);
+
+      // ── Re-score with Gemini ──────────────────────────────────────────────
+      const scoringResult = await scoreResume(
+        resumeText,
+        job.title,
+        job.description,
+        job.required_skills
+      );
+
+      // ── Update application row ────────────────────────────────────────────
+      const { data: updated, error: updateError } = await supabaseAdmin
+        .from('applications')
+        .update({
+          resume_url:    resumeUrl,
+          resume_text:   resumeText.slice(0, 50000),
+          match_score:   scoringResult.score,
+          match_summary: scoringResult.summary,
+          // Keep status = 'pending' — don't reset, it was already pending
+        })
+        .eq('id', req.params.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        return res.status(500).json({ error: updateError.message });
+      }
+
+      return res.json({
+        ...updated,
+        matched_skills: scoringResult.matched_skills,
+        missing_skills: scoringResult.missing_skills,
+      });
+
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 module.exports = router;
+

@@ -1132,3 +1132,127 @@ code, pre {
   opacity: 0.8;
 }
 
+/* ── Change Resume Widget ────────────────────────────────────────── */
+
+.change-resume-wrap {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border);
+}
+
+.btn-change-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family);
+  font-weight: 500;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-change-resume:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-faint);
+}
+
+.btn-change-resume--submit {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.btn-change-resume--submit:hover {
+  background: var(--color-accent-hover);
+}
+
+.btn-change-resume--submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-change-resume--cancel {
+  color: var(--color-text-muted);
+}
+
+.change-resume-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.change-resume-file {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: 2px 0;
+}
+
+.change-resume-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.change-resume-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  background: #ffe3e3;
+  border: 1px solid #ffc9c9;
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+}
+
+.change-resume-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+  font-style: italic;
+}
+
+.change-resume-success {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: #d3f9d8;
+  border: 1px solid #b2f2bb;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  color: #1a6629;
+}
+
+.change-resume-success__icon {
+  font-size: 1rem;
+}
+
+.change-resume-again {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  background: none;
+  border: 1px solid #2f9e44;
+  color: #2f9e44;
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+.change-resume-again:hover {
+  background: #2f9e44;
+  color: #fff;
+}
+
+/* ── Pending hint label ──────────────────────────────────────────── */
+
+.pending-hint {
+  font-size: var(--font-size-xs);
+  color: #b45309;
+  font-style: italic;
+}
+

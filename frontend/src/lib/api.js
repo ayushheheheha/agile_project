@@ -115,6 +115,18 @@ export const applicationsApi = {
       method: 'PATCH',
       body: JSON.stringify({ notes }),
     }),
+
+  /**
+   * Re-upload a resume for a pending application.
+   * Re-runs AI scoring and updates score + summary.
+   * @param {string} applicationId
+   * @param {File}   resumeFile
+   */
+  changeResume: (applicationId, resumeFile) => {
+    const form = new FormData();
+    form.append('resume', resumeFile);
+    return apiFetch(`/applications/${applicationId}/resume`, { method: 'PATCH', body: form }, true);
+  },
 };
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
