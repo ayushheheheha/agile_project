@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HireSignal — Agile & DevOps Presentation</title>
+  <style>
+    :root {
+      --bg: #0f141c;
+      --card-bg: #18202c;
+      --card-border: #2a3649;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent: #8b5cf6;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Top Progress Bar */
+    #progress-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    #progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Deck Header */
+    header {
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(15, 20, 28, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .brand {
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand span { color: var(--primary); }
+    .badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tool-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .tool-btn:hover {
+      border-color: var(--primary);
+      background: #1f2a3a;
+    }
+
+    /* Slide Arena */
+    #arena {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 48px;
+      overflow-y: auto;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .slide.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Typography */
+    .slide-category {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p, .card li {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .card ul {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+    .card-highlight {
+      border-color: rgba(59, 130, 246, 0.4);
+      background: linear-gradient(180deg, rgba(59,130,246,0.06) 0%, rgba(24,32,44,1) 100%);
+    }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      text-align: left;
+    }
+    th {
+      background: #111722;
+      color: #cbd5e1;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--card-border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+      color: #94a3b8;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .col-highlight { color: #f1f5f9; font-weight: 600; }
+
+    /* Architecture Visual Blocks */
+    .diagram-container {
+      background: #0b0f16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 16px 0;
+    }
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .arch-box {
+      flex: 1;
+      background: #16202e;
+      border: 1px solid #2d3b4e;
+      border-radius: 8px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .arch-box.highlight {
+      border-color: var(--primary);
+      background: #19273c;
+    }
+    .arch-box h4 {
+      font-size: 1rem;
+      color: #f8fafc;
+      margin-bottom: 6px;
+    }
+    .arch-box span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+      line-height: 1.4;
+    }
+    .arch-arrow {
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Pipeline Flow */
+    .pipe-step {
+      background: #141c28;
+      border: 1px solid #243144;
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pipe-step.green { border-left-color: var(--success); }
+    .pipe-step.purple { border-left-color: var(--accent); }
+    .pipe-step h4 { font-size: 0.95rem; color: #f1f5f9; }
+    .pipe-step p { font-size: 0.82rem; color: #94a3b8; margin-top: 3px; }
+
+    /* Speaker Notes Drawer */
+    #notes-drawer {
+      background: #090d13;
+      border-top: 1px solid #1f2a3a;
+      padding: 14px 28px;
+      max-height: 140px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #93c5fd;
+      display: none;
+    }
+    #notes-drawer.open {
+      display: block;
+    }
+    .notes-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #60a5fa;
+      margin-bottom: 4px;
+    }
+
+    /* Deck Footer */
+    footer {
+      padding: 12px 28px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 20, 28, 0.85);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .kbd-hint {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      margin: 0 3px;
+      font-family: var(--font-mono);
+    }
+    .nav-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-btn {
+      padding: 6px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .nav-btn:hover {
+      background: #253347;
+      border-color: var(--primary);
+    }
+    .nav-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .nav-btn.primary:hover {
+      background: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="progress-container"><div id="progress-bar"></div></div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      Hire<span>Signal</span>
+      <span class="badge">Agile &amp; DevOps Course</span>
+    </div>
+    <div class="nav-tools">
+      <button class="tool-btn" id="btn-notes" onclick="toggleNotes()">
+        💬 Speaker Notes <span class="kbd-hint">S</span>
+      </button>
+      <button class="tool-btn" id="btn-fs" onclick="toggleFullscreen()">
+        ⛶ Fullscreen <span class="kbd-hint">F</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Slide Arena -->
+  <main id="arena">
+
+    <!-- SLIDE 1: Title -->
+    <div class="slide active" data-notes="Welcome everyone. Today I'm presenting HireSignal, an AI-driven recruitment and candidate evaluation platform developed for our Agile Development & DevOps course. While the application solves practical hiring inefficiencies, our primary focus is demonstrating production-grade DevOps engineering: containerized microservices, automated CI/CD pipelines, test-driven resiliency, and structured Scrum sprint delivery.">
+      <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <span class="badge" style="font-size: 0.9rem; padding: 6px 14px; margin-bottom: 20px; display: inline-block;">Course Capstone Project</span>
+        <h1 style="font-size: 3.4rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 14px;">
+          Hire<span style="color: var(--primary);">Signal</span>
+        </h1>
+        <p style="font-size: 1.35rem; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5;">
+          AI-Driven Candidate Evaluation &amp; Recruitment Platform
+        </p>
+        <div class="card card-highlight" style="display: inline-block; text-align: left; padding: 20px 32px;">
+          <p style="margin-bottom: 8px;"><strong>Course:</strong> Agile Development &amp; DevOps</p>
+          <p style="margin-bottom: 8px;"><strong>Presenter:</strong> Ayush Yadav</p>
+          <p style="margin-bottom: 8px;"><strong>Repository:</strong> <span style="font-family: var(--font-mono); color: #93c5fd;">ayushheheheha/agile_project</span></p>
+          <p><strong>Core Tech:</strong> React · Node.js · Supabase · Gemini AI · Docker · GitHub Actions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Problem Space -->
+    <div class="slide" data-notes="Modern hiring workflows face an acute volume problem. Organizations receive hundreds of resumes for single technical roles. Human evaluation takes weeks, while legacy keyword filters reject great engineers simply because of word variations. Candidates sit in an application black hole. HireSignal introduces automated semantic AI matching to rank applicants instantly and objectively.">
+      <div class="slide-category">The Problem Space</div>
+      <h2 class="slide-title">The Technical Hiring Bottleneck</h2>
+      <p class="slide-subtitle">Why traditional manual screening and legacy ATS systems fail hiring teams and candidates.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="color: var(--danger);">⏳ High Volume &amp; Latency</h3>
+          <p>Engineering job openings average <strong>250+ applications</strong>. Recruiters spend over 75% of their working hours manually scanning resumes, creating weeks of candidate backlog.</p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--warning);">🎯 Keyword Bias &amp; Inaccuracy</h3>
+          <p>Traditional ATS filters use rigid string search. Qualified engineers are rejected if their resume lists "Docker &amp; Containerization" instead of the exact phrase "Docker container orchestration".</p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--accent);">🕳️ Candidate Black Hole</h3>
+          <p>Candidates experience zero transparency: no alignment score, no constructive skill feedback, and status updates that take months or never arrive.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Product Solution -->
+    <div class="slide" data-notes="HireSignal pairs generative AI with dual-role user journeys. Recruiters post technical roles and view applicants ranked by an objective AI match score. Candidates apply with PDF resumes and receive real-time match evaluation. The UI is built with a high-density, professional aesthetic inspired by developer tools like Linear and GitHub.">
+      <div class="slide-category">The Product Solution</div>
+      <h2 class="slide-title">Dual-Role Workflow &amp; Objective Scoring</h2>
+      <p class="slide-subtitle">A streamlined, professional internal tool that connects recruiters and candidates seamlessly.</p>
+      <div class="grid-2">
+        <div class="card card-highlight">
+          <h3>👔 Recruiter Experience</h3>
+          <ul>
+            <li>Post technical roles with strict required skill requirements.</li>
+            <li>Dashboard automatically <strong>ranks applicants by AI score (0–100)</strong>.</li>
+            <li>Instant breakdown of matched vs. missing skills for each candidate.</li>
+            <li>One-click status transitions: <span class="badge">Pending</span> <span class="badge">Reviewed</span> <span class="badge">Hired</span> <span class="badge">Rejected</span>.</li>
+          </ul>
+        </div>
+        <div class="card card-highlight">
+          <h3>💼 Candidate Experience</h3>
+          <ul>
+            <li>Browse active positions with real-time recruiter information.</li>
+            <li>Submit applications with standard <strong>PDF resume uploads</strong>.</li>
+            <li>Real-time Gemini AI scoring and objective match summaries.</li>
+            <li>Application tracking portal showing application status and score cards.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Agile Framework -->
+    <div class="slide" data-notes="For our project planning, we implemented the Scrum framework across 3 weekly sprints. We estimated stories using the Fibonacci sequence (1, 2, 3, 5, 8). The total product backlog comprises 72 story points organized into 5 functional Epics.">
+      <div class="slide-category">Agile Project Management</div>
+      <h2 class="slide-title">Scrum Framework &amp; Backlog Architecture</h2>
+      <p class="slide-subtitle">Disciplined estimation using Fibonacci story points (72 total points across 5 functional Epics).</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Epic ID</th>
+              <th>Epic Name</th>
+              <th>Points</th>
+              <th>Key User Stories</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-highlight">Epic A</td>
+              <td>Authentication &amp; User Profiles</td>
+              <td>14 pts</td>
+              <td>Role selection (Recruiter vs. Candidate), Supabase Auth JWT, Route Guards</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Epic B</td>
+              <td>Job Management</td>
+              <td>10 pts</td>
+              <td>Job posting creation, comma-separated skill arrays, recruiter ownership filter</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Epic C</td>
+              <td>Application &amp; Resume Processing</td>
+              <td>11 pts</td>
+              <td>Multipart PDF upload, in-memory buffer parsing, Supabase Storage uploads</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Epic D</td>
+              <td>AI Evaluation Engine</td>
+              <td>19 pts</td>
+              <td>Gemini 1.5 Flash prompt design, JSON schema parsing, 429 rate limit backoff</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Epic E</td>
+              <td>Review &amp; Status Tracking</td>
+              <td>18 pts</td>
+              <td>Ranked applicant tables, recruiter status lifecycle, candidate portal</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Sprint Breakdown -->
+    <div class="slide" data-notes="Our velocity target was approximately 24 points per week. In Sprint 1, we prioritized the core foundation—setting up authentication, database schemas, Docker containers, and CI/CD pipelines. In Sprint 2, we built job creation, resume upload streaming, and Gemini AI. In Sprint 3, we focused on fault-tolerance, local keyword fallback, and recruiter review workflows.">
+      <div class="slide-category">Sprint Execution</div>
+      <h2 class="slide-title">3-Sprint Roadmap &amp; Velocity</h2>
+      <p class="slide-subtitle">100% velocity commitment achieved across three focused 1-week iterations.</p>
+      <div class="grid-3">
+        <div class="card">
+          <span class="badge" style="margin-bottom: 10px;">Sprint 1 — 20 Pts</span>
+          <h3>Foundation &amp; DevOps</h3>
+          <ul>
+            <li>Supabase Postgres DB &amp; RLS policies</li>
+            <li>JWT authentication middleware</li>
+            <li>Multi-stage Dockerfiles &amp; Compose</li>
+            <li>GitHub Actions CI &amp; CD setup</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge" style="margin-bottom: 10px;">Sprint 2 — 28 Pts</span>
+          <h3>Core Features &amp; AI</h3>
+          <ul>
+            <li>Recruiter job posting interface</li>
+            <li>Candidate job discovery catalog</li>
+            <li>Multer in-memory PDF parsing</li>
+            <li>Gemini 1.5 Flash scoring pipeline</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge" style="margin-bottom: 10px;">Sprint 3 — 24 Pts</span>
+          <h3>Resiliency &amp; Polish</h3>
+          <ul>
+            <li>Rate-limit retry &amp; local keyword fallback</li>
+            <li>Recruiter ranked applicant dashboard</li>
+            <li>Status update lifecycle API</li>
+            <li>14-test Jest suite &amp; zero-config simulation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Retrospective -->
+    <div class="slide" data-notes="Continuous inspection and adaptation were central to our workflow. In Sprint 1, we resolved environment drift by consolidating into a single root .env file. In Sprint 2, we addressed external API rate limits by introducing an exponential backoff retry and a local keyword overlap fallback. In Sprint 3, we built an interactive platform simulation to ensure zero-config evaluability.">
+      <div class="slide-category">Continuous Improvement</div>
+      <h2 class="slide-title">Sprint Retrospectives &amp; Adaptations</h2>
+      <p class="slide-subtitle">How real development impediments drove continuous architectural improvements.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sprint</th>
+              <th>Identified Impediment / Challenge</th>
+              <th>Engineering Solution Applied</th>
+              <th>Agile Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-highlight">Sprint 1</td>
+              <td>Duplicate .env files in frontend &amp; backend caused variable drift.</td>
+              <td>Refactored Vite &amp; Express configs to load from a <strong>single root .env</strong> file.</td>
+              <td>Configuration parity between local dev, Docker, and CI.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Sprint 2</td>
+              <td>Gemini API free tier hit 15 RPM rate limits during test applications.</td>
+              <td>Engineered a <strong>3-tier resiliency fallback</strong> (backoff retry + local keyword scorer).</td>
+              <td>100% application uptime; zero failed user submissions.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Sprint 3</td>
+              <td>Evaluator needed a way to test without setting up external API keys.</td>
+              <td>Created <code>backend/simulate.js</code> and on-demand database seeders.</td>
+              <td>Frictionless, zero-config grading and live demonstrations.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: High-Level Architecture -->
+    <div class="slide" data-notes="This diagram shows the complete multi-tier system topology. The user interacts with an Nginx reverse proxy running on port 80. Nginx serves the compiled React application and transparently forwards /api/ calls to the Express backend on port 4000. The backend communicates with Supabase for data and storage, and Google Gemini for AI evaluations.">
+      <div class="slide-category">System Architecture</div>
+      <h2 class="slide-title">Multi-Tier Full-Stack Architecture</h2>
+      <p class="slide-subtitle">Decoupled client-server topology orchestrated in containerized isolation.</p>
+      <div class="diagram-container">
+        <div class="arch-flow">
+          <div class="arch-box">
+            <h4>Client Tier</h4>
+            <span>Browser UI<br>React 18 SPA (Vite)</span>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-box highlight">
+            <h4>Web Server (Nginx)</h4>
+            <span>Port :80<br>Serves Static SPA &amp; Proxies <code>/api/*</code></span>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-box highlight">
+            <h4>API Tier (Express)</h4>
+            <span>Port :4000<br>Node.js, Multer, pdf-parse, Scorer</span>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-box">
+            <h4>Cloud Services</h4>
+            <span>Supabase (DB/Auth/Storage)<br>Google Gemini 1.5 Flash</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top: 20px;">
+        <div class="card">
+          <h4>🔒 Security &amp; Isolation</h4>
+          <p>Supabase Row Level Security (RLS) ensures candidates can only read their own applications, while recruiters can only view applicants for jobs they personally authored.</p>
+        </div>
+        <div class="card">
+          <h4>⚡ Zero Disk Footprint</h4>
+          <p>Multer uses in-memory buffer storage. Resumes are parsed in RAM and streamed directly to Supabase Storage without writing temporary files to server disks.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: End-to-End Data Flow -->
+    <div class="slide" data-notes="Here is the exact data lifecycle when a candidate applies. The PDF is parsed into raw text in RAM, uploaded to Supabase Storage, and passed to Gemini 1.5 Flash alongside the job requirements. Gemini returns a structured JSON payload with score, matched skills, and summary. The result is stored in Supabase Postgres and instantly displayed to both the candidate and recruiter.">
+      <div class="slide-category">Data Flow</div>
+      <h2 class="slide-title">Resume Evaluation Pipeline</h2>
+      <p class="slide-subtitle">The asynchronous lifecycle from PDF upload to AI ranking and database persistence.</p>
+      <div class="pipe-step">
+        <div>
+          <h4>1. Resume Submission (Multipart Form-Data)</h4>
+          <p>Candidate uploads PDF resume on <code>POST /api/applications</code>. Multer captures bytes in RAM.</p>
+        </div>
+        <span class="badge">Candidate</span>
+      </div>
+      <div class="pipe-step green">
+        <div>
+          <h4>2. Text Extraction &amp; Storage Persistence</h4>
+          <p><code>pdf-parse</code> extracts clean text buffer; binary is uploaded to Supabase Storage <code>resumes</code> bucket.</p>
+        </div>
+        <span class="badge" style="color: var(--success); border-color: var(--success);">Backend RAM</span>
+      </div>
+      <div class="pipe-step purple">
+        <div>
+          <h4>3. Gemini AI Semantic Evaluation &amp; Fallback</h4>
+          <p>Resume text compared against required skills. Gemini returns structured JSON score (0–100) and summary.</p>
+        </div>
+        <span class="badge" style="color: var(--accent); border-color: var(--accent);">Gemini 1.5 Flash</span>
+      </div>
+      <div class="pipe-step">
+        <div>
+          <h4>4. Database Record &amp; Recruiter Dashboard Ranking</h4>
+          <p>Application saved to PostgreSQL. Recruiter dashboard ranks applicants descending by match score.</p>
+        </div>
+        <span class="badge">Supabase DB</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: DevOps Matrix -->
+    <div class="slide" data-notes="This table summarizes 'who handles what' across the DevOps lifecycle. We cover version control, linting, automated unit testing, containerization, local orchestration, CI, CD, configuration management, and database authorization.">
+      <div class="slide-category">DevOps Engineering</div>
+      <h2 class="slide-title">DevOps Responsibility Matrix</h2>
+      <p class="slide-subtitle">Detailed mapping of tooling and architectural responsibilities across the lifecycle.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>DevOps Domain</th>
+              <th>Tool / Platform</th>
+              <th>Implementation &amp; Responsibility</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-highlight">Version Control</td>
+              <td>Git &amp; GitHub</td>
+              <td>Trunk-based workflow on <code>main</code>, atomic commits, branch protection rules.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Code Quality</td>
+              <td>ESLint v9 (Flat Config)</td>
+              <td>Automated linting enforcing zero warnings across backend (<code>.mjs</code>) and frontend (<code>.jsx</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Automated Testing</td>
+              <td>Jest (14 Tests)</td>
+              <td>Fully mocked external AI client testing code fence cleanup, rate limits, and fallback scoring.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Containerization</td>
+              <td>Docker</td>
+              <td>Multi-stage builds (<code>node:20-alpine</code> builder + <code>nginx:alpine</code> production runner).</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Orchestration</td>
+              <td>Docker Compose</td>
+              <td>Single-command environment bringing up frontend, backend, health checks, and bridge network.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Continuous Integration</td>
+              <td>GitHub Actions (<code>ci.yml</code>)</td>
+              <td>Automated parallel linting, Jest testing with coverage artifacts, and Docker build validation.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Continuous Deployment</td>
+              <td>GitHub Actions (<code>cd.yml</code>)</td>
+              <td>Automatic Docker build &amp; push to GitHub Container Registry (<code>ghcr.io</code>) using <code>GITHUB_TOKEN</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-highlight">Data Security</td>
+              <td>Postgres RLS</td>
+              <td>Row Level Security policies preventing cross-user data leakage at the database layer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: CI Pipeline -->
+    <div class="slide" data-notes="Our Continuous Integration workflow triggers on every push and pull request to main or develop. Job 1 runs ESLint in parallel on both backend and frontend. Job 2 runs our 14 Jest unit tests with mock AI clients and uploads a test coverage report. Job 3 validates that both Dockerfiles build without errors.">
+      <div class="slide-category">Continuous Integration</div>
+      <h2 class="slide-title">CI Pipeline Architecture (<code>ci.yml</code>)</h2>
+      <p class="slide-subtitle">Three-stage automated verification triggered on every Push and Pull Request.</p>
+      <div class="grid-3">
+        <div class="card card-highlight">
+          <h3>Job 1: ESLint</h3>
+          <p>Runs in parallel across both workspaces:</p>
+          <ul>
+            <li><code>backend/</code>: Node.js 20, CommonJS + MJS config</li>
+            <li><code>frontend/</code>: React JSX, browser globals</li>
+            <li>Enforces <strong>zero warnings</strong> policy</li>
+          </ul>
+        </div>
+        <div class="card card-highlight">
+          <h3>Job 2: Jest Tests</h3>
+          <p>Backend test suite execution:</p>
+          <ul>
+            <li>14 unit test scenarios executed</li>
+            <li><strong>Gemini API fully mocked</strong> (zero API costs, zero flakiness)</li>
+            <li>Test coverage artifacts saved</li>
+          </ul>
+        </div>
+        <div class="card card-highlight">
+          <h3>Job 3: Docker Validation</h3>
+          <p>Container build verification:</p>
+          <ul>
+            <li>Validates backend Dockerfile</li>
+            <li>Validates frontend multi-stage build</li>
+            <li>Uses GitHub Actions cache (<code>type=gha</code>)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 16px; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3);">
+        <p style="color: #6ee7b7;">✔ <strong>All CI checks are currently passing</strong> on our repository: ESLint (23s), Jest (17s), and Docker Build (1m).</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: CD Pipeline -->
+    <div class="slide" data-notes="Continuous Deployment triggers whenever code is merged to main. It initializes Docker Buildx, authenticates to GitHub Container Registry using the native GITHUB_TOKEN with packages:write permissions, extracts Git SHA and latest tags, and pushes production images to ghcr.io.">
+      <div class="slide-category">Continuous Deployment</div>
+      <h2 class="slide-title">CD Pipeline Architecture (<code>cd.yml</code>)</h2>
+      <p class="slide-subtitle">Automated image compilation and publishing to GitHub Container Registry (GHCR).</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>🚀 Automated Deployment Steps</h3>
+          <ul>
+            <li><strong>Trigger:</strong> Push or merged Pull Request to <code>main</code>.</li>
+            <li><strong>Buildx Setup:</strong> Enables advanced caching to speed up subsequent builds.</li>
+            <li><strong>Zero-Config Authentication:</strong> Uses GitHub's built-in <code>${{ secrets.GITHUB_TOKEN }}</code> (no external PAT required).</li>
+            <li><strong>Downcased Tagging:</strong> Enforces lowercase image naming conventions required by Docker and OCI registries.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📦 Published Registry Artifacts</h3>
+          <div class="pipe-step" style="margin-top: 8px;">
+            <div>
+              <h4>Backend Production Image</h4>
+              <p style="font-family: var(--font-mono); font-size: 0.78rem;">ghcr.io/ayushheheheha/hiresignal-backend:latest</p>
+            </div>
+          </div>
+          <div class="pipe-step green" style="margin-top: 8px;">
+            <div>
+              <h4>Frontend Nginx Production Image</h4>
+              <p style="font-family: var(--font-mono); font-size: 0.78rem;">ghcr.io/ayushheheheha/hiresignal-frontend:latest</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Docker Details -->
+    <div class="slide" data-notes="Docker Compose coordinates our multi-service setup. The frontend uses a multi-stage Dockerfile where Node builds the static assets, and an Nginx container serves them. Nginx proxies all /api/ requests directly to the backend over an internal bridge network. The backend includes automated health checks so the frontend only starts when the API is ready.">
+      <div class="slide-category">Container Orchestration</div>
+      <h2 class="slide-title">Docker Compose &amp; Multi-Stage Builds</h2>
+      <p class="slide-subtitle">Production-grade image optimization and zero-configuration local orchestration.</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>🐳 Multi-Stage Frontend Build</h3>
+          <p><strong>Stage 1 (Builder):</strong> <code>node:20-alpine</code> installs dev dependencies and compiles Vite bundle.</p>
+          <p style="margin-top: 8px;"><strong>Stage 2 (Runner):</strong> <code>nginx:alpine</code> copies only the compiled <code>/dist</code> folder. Discards Node, npm, and dev tools.</p>
+          <p style="margin-top: 8px; color: var(--success);">✔ <strong>Result:</strong> Tiny production image (~25 MB) with zero runtime Node vulnerability surface.</p>
+        </div>
+        <div class="card">
+          <h3>🌐 Nginx Reverse Proxy &amp; Health Checks</h3>
+          <ul>
+            <li><strong>CORS Elimination:</strong> Browser communicates only with port 80. Nginx proxies <code>/api/*</code> to <code>http://backend:4000</code> internally.</li>
+            <li><strong>Health Checks:</strong> Backend runs automated <code>wget http://localhost:4000/health</code> every 30s.</li>
+            <li><strong>Startup Dependency:</strong> <code>depends_on: condition: service_healthy</code> ensures correct startup sequence.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: AI Engineering -->
+    <div class="slide" data-notes="In real-world applications, external AI APIs can fail due to rate limits or invalid formatting. We built a 3-tier resiliency system: first, stripCodeFences cleans markdown formatting; second, a 5-second backoff handles 429 rate limits; third, if the API is down or unauthenticated, a local keyword-overlap scorer executes automatically with zero user interruption.">
+      <div class="slide-category">AI Engineering &amp; Resiliency</div>
+      <h2 class="slide-title">Fault-Tolerant AI Scoring Pipeline</h2>
+      <p class="slide-subtitle">Graceful degradation guarantees that candidate applications are never blocked by AI failures.</p>
+      <div class="grid-3">
+        <div class="card">
+          <span class="badge" style="margin-bottom: 8px;">Tier 1</span>
+          <h3>Code Fence Cleaner</h3>
+          <p>Strips <code>```json ... ```</code> wrappers commonly returned by LLMs to ensure reliable <code>JSON.parse()</code> execution.</p>
+        </div>
+        <div class="card">
+          <span class="badge" style="margin-bottom: 8px;">Tier 2</span>
+          <h3>Rate-Limit Retry</h3>
+          <p>Catches HTTP 429 quota exhaustion on free-tier Gemini API, waits 5 seconds, and automatically retries once.</p>
+        </div>
+        <div class="card">
+          <span class="badge" style="margin-bottom: 8px;">Tier 3</span>
+          <h3>Local Scorer Fallback</h3>
+          <p>Calculates skill overlap <code>(matched/total * 100)</code>. Returns the identical output shape so the UI never crashes.</p>
+        </div>
+      </div>
+      <div class="card card-highlight" style="margin-top: 16px;">
+        <p><strong>Tested &amp; Verified:</strong> All fallback branches (malformed JSON, rate limit retry, missing API key, score clamping) are verified by our 14 Jest unit tests.</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: Demonstration -->
+    <div class="slide" data-notes="Now we move to our live demonstration. We have pre-seeded realistic data into Supabase: a recruiter account, 3 technical jobs, and multiple candidates with distinct resume matches. Evaluators can also run node simulate.js in backend for an immediate console demonstration.">
+      <div class="slide-category">Live Demonstration</div>
+      <h2 class="slide-title">System Demonstration &amp; Live Walkthrough</h2>
+      <p class="slide-subtitle">Demonstrating both live web workflows and zero-config simulation mode.</p>
+      <div class="grid-2">
+        <div class="card card-highlight">
+          <h3>🌐 Live Web Interface Walkthrough</h3>
+          <ul>
+            <li><strong>Recruiter Login:</strong> <code>recruiter@hiresignal.demo</code> / <code>Password123!</code></li>
+            <li><strong>Ranked Applicants:</strong> View candidates sorted by AI score (100, 95, 71, etc.).</li>
+            <li><strong>Status Update:</strong> Transition candidate status (Hired, Reviewed, Rejected).</li>
+            <li><strong>Candidate Portal:</strong> View real-time match scores and skill summaries.</li>
+          </ul>
+        </div>
+        <div class="card card-highlight">
+          <h3>⚡ Zero-Config Terminal Simulation</h3>
+          <p>For instant evaluator grading without setting up cloud accounts:</p>
+          <pre style="background: #090d13; padding: 12px; border-radius: 6px; margin: 10px 0; font-family: var(--font-mono); font-size: 0.85rem; color: #38bdf8;">cd backend
+npm run simulate</pre>
+          <p>Executes recruitment simulation, evaluates resumes, ranks applicants, and prints platform analytics in seconds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: Conclusion -->
+    <div class="slide" data-notes="In conclusion, HireSignal proves that modern DevOps practices and Agile sprint discipline are foundational to shipping reliable full-stack software. Thank you for your time, and I welcome any questions from the panel.">
+      <div class="slide-category">Conclusion &amp; Learnings</div>
+      <h2 class="slide-title">Key Takeaways &amp; Engineering Maturity</h2>
+      <p class="slide-subtitle">Summary of learnings from our Agile development and DevOps journey.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>📈 Agile Velocity</h3>
+          <p>Strict Definition of Done and Fibonacci estimation ensured all 72 story points across 5 Epics were completed on schedule without scope drift.</p>
+        </div>
+        <div class="card">
+          <h3>🔄 Automated DevOps</h3>
+          <p>Automated CI/CD pipelines and Docker containerization caught integration bugs early and guaranteed environment parity from development to GHCR deployment.</p>
+        </div>
+        <div class="card">
+          <h3>🛡️ Resilient AI Design</h3>
+          <p>Designing graceful fallbacks for external AI APIs is essential for mission-critical software reliability.</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 36px;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Thank You!</h3>
+        <p style="color: var(--text-muted);">Questions &amp; Discussion</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <div id="notes-drawer">
+    <div class="notes-title">Speaker Script &amp; Talking Points</div>
+    <div id="notes-content">Welcome to the presentation.</div>
+  </div>
+
+  <!-- Footer Navigation -->
+  <footer>
+    <div>
+      <span id="slide-counter">Slide 1 of 15</span>
+      <span style="margin-left: 16px;">Navigate: <span class="kbd-hint">◀</span> <span class="kbd-hint">▶</span> or <span class="kbd-hint">Space</span></span>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="prevSlide()">Previous</button>
+      <button class="nav-btn primary" onclick="nextSlide()">Next</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progress-bar');
+    const slideCounter = document.getElementById('slide-counter');
+    const notesContent = document.getElementById('notes-content');
+    const notesDrawer = document.getElementById('notes-drawer');
+    let current = 0;
+
+    function updateSlide(idx) {
+      if (idx < 0) idx = 0;
+      if (idx >= slides.length) idx = slides.length - 1;
+
+      slides[current].classList.remove('active');
+      current = idx;
+      slides[current].classList.add('active');
+
+      // Update counter and progress bar
+      slideCounter.innerText = `Slide ${current + 1} of ${slides.length}`;
+      const pct = ((current + 1) / slides.length) * 100;
+      progressBar.style.width = `${pct}%`;
+
+      // Update speaker notes
+      const notes = slides[current].getAttribute('data-notes') || 'No speaker notes for this slide.';
+      notesContent.innerText = notes;
+    }
+
+    function nextSlide() {
+      if (current < slides.length - 1) updateSlide(current + 1);
+    }
+
+    function prevSlide() {
+      if (current > 0) updateSlide(current - 1);
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 's' || e.key === 'S') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize first slide
+    updateSlide(0);
+  </script>
+</body>
+</html>
