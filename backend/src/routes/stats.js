@@ -59,7 +59,7 @@ router.get('/recruiter', requireAuth, requireRole('recruiter'), async (req, res,
 
     // ── KPI aggregations ──────────────────────────────────────────────────────
     const totalApplicants = apps.length;
-    const scoresWithValue = apps.filter(a => a.match_score != null);
+    const scoresWithValue = apps.filter(a => a.match_score !== null && a.match_score !== undefined);
     const avgScore = scoresWithValue.length > 0
       ? Math.round(scoresWithValue.reduce((sum, a) => sum + a.match_score, 0) / scoresWithValue.length)
       : null;
@@ -137,7 +137,7 @@ router.get('/candidate', requireAuth, requireRole('candidate'), async (req, res,
     if (error) return res.status(500).json({ error: error.message });
 
     const applications = apps || [];
-    const scoresWithValue = applications.filter(a => a.match_score != null);
+    const scoresWithValue = applications.filter(a => a.match_score !== null && a.match_score !== undefined);
     const avgScore = scoresWithValue.length > 0
       ? Math.round(scoresWithValue.reduce((s, a) => s + a.match_score, 0) / scoresWithValue.length)
       : null;

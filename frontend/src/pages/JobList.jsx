@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jobsApi } from '../lib/api.js';
 import { Loading, EmptyState, ErrorAlert, SkillList, formatDate } from '../components/ui.jsx';
+import { IconZap, IconSearch } from '../components/Icons.jsx';
 
 export default function JobList() {
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ export default function JobList() {
           disabled={seeding}
           title="Populate realistic demo jobs and applicants"
         >
-          {seeding ? 'Seeding…' : '⚡ Load Demo Data'}
+          {seeding ? 'Seeding…' : <><IconZap size={14} /> Load Demo Data</>}
         </button>
       </div>
 
@@ -112,7 +113,7 @@ export default function JobList() {
       {/* ── Search & Sort Bar ── */}
       <div className="search-bar-row">
         <div className="search-input-wrap">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><IconSearch size={15} /></span>
           <input
             id="jobs-search"
             type="text"

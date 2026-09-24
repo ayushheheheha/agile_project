@@ -188,7 +188,7 @@ describe('scoreResume', () => {
     expect(result.score).toBeLessThanOrEqual(100);
     expect(Array.isArray(result.matched_skills)).toBe(true);
     expect(Array.isArray(result.missing_skills)).toBe(true);
-    expect(result.summary).toMatch(/local keyword match/i);
+    expect(result.summary).toMatch(/candidate matched \d+ of \d+ required skills/i);
     expect(mockGenerateContent).toHaveBeenCalledTimes(1);
   });
 
@@ -204,7 +204,7 @@ describe('scoreResume', () => {
     );
 
     expect(typeof result.score).toBe('number');
-    expect(result.summary).toMatch(/local keyword match/i);
+    expect(result.summary).toMatch(/candidate matched \d+ of \d+ required skills/i);
     // Attempted once, then fell back (no retry for non-rate-limit errors)
     expect(mockGenerateContent).toHaveBeenCalledTimes(1);
   });
@@ -239,7 +239,7 @@ describe('scoreResume', () => {
 
     const result = await promise;
 
-    expect(result.summary).toMatch(/local keyword match/i);
+    expect(result.summary).toMatch(/candidate matched \d+ of \d+ required skills/i);
     // Should have tried twice
     expect(mockGenerateContent).toHaveBeenCalledTimes(2);
   }, 15000);

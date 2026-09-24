@@ -4,6 +4,9 @@ import { applicationsApi, jobsApi, statsApi } from '../lib/api.js';
 import {
   Loading, EmptyState, ErrorAlert, ScoreBadge, formatDate,
 } from '../components/ui.jsx';
+import {
+  IconCheckCircle, IconPaperclip, IconUpload, IconZap, IconSend, IconCpu, IconAward, IconStar, IconFile,
+} from '../components/Icons.jsx';
 
 const STATUS_CLASS = {
   pending:  'badge-pending',
@@ -54,7 +57,7 @@ function ChangeResumeWidget({ appId, onUpdated }) {
   if (result) {
     return (
       <div className="change-resume-success">
-        <span className="change-resume-success__icon">✅</span>
+        <span className="change-resume-success__icon"><IconCheckCircle size={16} /></span>
         <span>
           Resume updated! New score: <strong>{result.match_score != null ? Math.round(result.match_score) : '—'}</strong>
         </span>
@@ -76,7 +79,7 @@ function ChangeResumeWidget({ appId, onUpdated }) {
           onClick={() => setOpen(true)}
           title="Re-upload your resume and get a new AI score"
         >
-          📎 Change Resume
+          <IconPaperclip size={13} /> Change Resume
         </button>
       ) : (
         <form onSubmit={handleSubmit} className="change-resume-form" noValidate>
@@ -98,7 +101,7 @@ function ChangeResumeWidget({ appId, onUpdated }) {
             >
               {uploading
                 ? <><span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} />Scoring…</>
-                : '✅ Upload & Re-score'
+                : <><IconUpload size={13} /> Upload &amp; Re-score</>
               }
             </button>
             <button
@@ -195,7 +198,7 @@ export default function CandidateDashboard() {
             disabled={seeding}
             title="Populate realistic demo applications"
           >
-            {seeding ? 'Seeding…' : '⚡ Load Demo Applications'}
+            {seeding ? 'Seeding…' : <><IconZap size={14} /> Load Demo Applications</>}
           </button>
           <Link to="/jobs" className="btn btn-primary">Browse Jobs</Link>
         </div>
@@ -207,14 +210,14 @@ export default function CandidateDashboard() {
       {stats && (
         <div className="stat-grid" style={{ marginBottom: 'var(--space-5)' }}>
           <div className="stat-card" style={{ borderTopColor: '#6366f1' }}>
-            <div className="stat-card__icon">📨</div>
+            <div className="stat-card__icon"><IconSend size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#6366f1' }}>{stats.totalApplications}</div>
               <div className="stat-card__label">Applications Sent</div>
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#3b82f6' }}>
-            <div className="stat-card__icon">🤖</div>
+            <div className="stat-card__icon"><IconCpu size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#3b82f6' }}>
                 {stats.avgScore != null ? stats.avgScore : '—'}
@@ -223,7 +226,7 @@ export default function CandidateDashboard() {
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#10b981' }}>
-            <div className="stat-card__icon">🏆</div>
+            <div className="stat-card__icon"><IconAward size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#10b981' }}>
                 {stats.bestScore != null ? stats.bestScore : '—'}
@@ -232,7 +235,7 @@ export default function CandidateDashboard() {
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#10b981' }}>
-            <div className="stat-card__icon">🎉</div>
+            <div className="stat-card__icon"><IconStar size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#10b981' }}>{stats.statusBreakdown?.hired ?? 0}</div>
               <div className="stat-card__label">Offers / Hired</div>
@@ -274,7 +277,7 @@ export default function CandidateDashboard() {
 
           {filteredApps.length === 0 ? (
             <div className="empty-state">
-              <p>No applications with status "{filterStatus}".</p>
+              <p>No applications with status &quot;{filterStatus}&quot;.</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
@@ -297,7 +300,7 @@ export default function CandidateDashboard() {
                           {app.status}
                         </span>
                         {app.status === 'pending' && (
-                          <span className="pending-hint">· recruiter hasn't reviewed yet</span>
+                          <span className="pending-hint">&middot; recruiter hasn&apos;t reviewed yet</span>
                         )}
                       </div>
                       <div className="text-xs text-muted" style={{ marginTop: 3 }}>
@@ -313,9 +316,9 @@ export default function CandidateDashboard() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm"
-                          style={{ whiteSpace: 'nowrap' }}
+                          style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
-                          📄 View Resume
+                          <IconFile size={14} /> View Resume
                         </a>
                       )}
                     </div>

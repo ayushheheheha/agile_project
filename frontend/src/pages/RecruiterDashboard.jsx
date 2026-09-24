@@ -5,6 +5,9 @@ import { useAuth } from '../components/AuthContext.jsx';
 import {
   Loading, EmptyState, ErrorAlert, SuccessAlert, SkillList, formatDate,
 } from '../components/ui.jsx';
+import {
+  IconBarChart, IconZap, IconBriefcase, IconUsers, IconCheckCircle, IconCpu,
+} from '../components/Icons.jsx';
 
 export default function RecruiterDashboard() {
   const { user }   = useAuth();
@@ -99,14 +102,14 @@ export default function RecruiterDashboard() {
       <div className="page-header">
         <h1>Recruiter Dashboard</h1>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Link to="/analytics" className="btn btn-secondary">📊 Analytics</Link>
+          <Link to="/analytics" className="btn btn-secondary"><IconBarChart size={14} /> Analytics</Link>
           <button
             className="btn btn-secondary"
             onClick={handleSeed}
             disabled={seeding}
             title="Populate realistic demo jobs and applicants"
           >
-            {seeding ? 'Seeding…' : '⚡ Load Demo Data'}
+            {seeding ? 'Seeding…' : <><IconZap size={14} /> Load Demo Data</>}
           </button>
           <button
             id="post-job-btn"
@@ -122,28 +125,28 @@ export default function RecruiterDashboard() {
       {!loadingStats && stats && (
         <div className="stat-grid" style={{ marginBottom: 'var(--space-5)' }}>
           <div className="stat-card" style={{ borderTopColor: '#6366f1' }}>
-            <div className="stat-card__icon">📋</div>
+            <div className="stat-card__icon"><IconBriefcase size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#6366f1' }}>{stats.totalJobs}</div>
               <div className="stat-card__label">Jobs Posted</div>
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#3b82f6' }}>
-            <div className="stat-card__icon">👥</div>
+            <div className="stat-card__icon"><IconUsers size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#3b82f6' }}>{stats.totalApplicants}</div>
               <div className="stat-card__label">Total Applicants</div>
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#10b981' }}>
-            <div className="stat-card__icon">✅</div>
+            <div className="stat-card__icon"><IconCheckCircle size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#10b981' }}>{stats.statusBreakdown?.hired ?? 0}</div>
               <div className="stat-card__label">Hired</div>
             </div>
           </div>
           <div className="stat-card" style={{ borderTopColor: '#f59e0b' }}>
-            <div className="stat-card__icon">🤖</div>
+            <div className="stat-card__icon"><IconCpu size={20} /></div>
             <div className="stat-card__body">
               <div className="stat-card__value" style={{ color: '#f59e0b' }}>
                 {stats.avgScore != null ? `${stats.avgScore}` : '—'}

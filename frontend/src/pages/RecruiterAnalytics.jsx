@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { statsApi } from '../lib/api.js';
 import { Loading, ErrorAlert } from '../components/ui.jsx';
 import { StatCard, MiniBarChart, SparkLine, DonutChart } from '../components/charts.jsx';
+import {
+  IconBriefcase, IconUsers, IconCpu, IconCheckCircle, IconArrowLeft,
+} from '../components/Icons.jsx';
 
 const STATUS_COLORS = {
   pending:  '#f59e0b',
@@ -47,7 +50,7 @@ export default function RecruiterAnalytics() {
           <h1>Recruitment Analytics</h1>
           <span className="text-muted text-sm">Live stats across all your job postings</span>
         </div>
-        <Link to="/dashboard/recruiter" className="btn btn-secondary">← Dashboard</Link>
+        <Link to="/dashboard/recruiter" className="btn btn-secondary"><IconArrowLeft size={14} /> Dashboard</Link>
       </div>
 
       {/* ── KPI row ── */}
@@ -55,28 +58,28 @@ export default function RecruiterAnalytics() {
         <StatCard
           label="Jobs Posted"
           value={totalJobs}
-          icon="📋"
+          icon={<IconBriefcase size={20} />}
           accent="#6366f1"
           sub="total active listings"
         />
         <StatCard
           label="Total Applicants"
           value={totalApplicants}
-          icon="👥"
+          icon={<IconUsers size={20} />}
           accent="#3b82f6"
           sub="across all jobs"
         />
         <StatCard
           label="Avg AI Score"
           value={avgScore != null ? `${avgScore}/100` : 'N/A'}
-          icon="🤖"
+          icon={<IconCpu size={20} />}
           accent={scoreAccent}
           sub="match quality index"
         />
         <StatCard
           label="Hired"
           value={statusBreakdown.hired}
-          icon="✅"
+          icon={<IconCheckCircle size={20} />}
           accent="#10b981"
           sub={`of ${totalApplicants} applicants`}
         />

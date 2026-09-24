@@ -37,13 +37,22 @@ function localKeywordScore(resumeText, requiredSkills) {
   const lower = resumeText.toLowerCase();
   const matched = requiredSkills.filter(skill => lower.includes(skill.toLowerCase()));
   const missing = requiredSkills.filter(skill => !lower.includes(skill.toLowerCase()));
-  const score = Math.round((matched.length / requiredSkills.length) * 100);
+  const matchPct = Math.round((matched.length / requiredSkills.length) * 100);
+
+  let summaryLine;
+  if (matched.length === 0) {
+    summaryLine = `The candidate's resume did not match any of the ${requiredSkills.length} required skills for this role. A different skill set or more targeted experience would be needed.`;
+  } else if (matched.length === requiredSkills.length) {
+    summaryLine = `Strong match — the candidate demonstrates all ${requiredSkills.length} required skills including ${matched.slice(0, 3).join(', ')}. Well-suited for this role.`;
+  } else {
+    summaryLine = `The candidate matched ${matched.length} of ${requiredSkills.length} required skills (${matchPct}%), including ${matched.slice(0, 3).join(', ')}. Missing coverage in ${missing.slice(0, 3).join(', ')}.`;
+  }
 
   return {
-    score,
+    score: matchPct,
     matched_skills: matched,
     missing_skills: missing,
-    summary: `Local keyword match (AI scoring unavailable). Candidate matched ${matched.length} of ${requiredSkills.length} required skills.`,
+    summary: summaryLine,
   };
 }
 

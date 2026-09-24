@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 const { supabaseAdmin }            = require('../services/supabaseClient');
 
 const router = express.Router();

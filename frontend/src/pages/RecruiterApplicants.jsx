@@ -4,6 +4,9 @@ import { jobsApi, applicationsApi } from '../lib/api.js';
 import {
   Loading, ErrorAlert, SuccessAlert, ScoreBadge, SkillList, formatDate,
 } from '../components/ui.jsx';
+import {
+  IconArrowLeft, IconFile, IconEdit, IconChevronUp,
+} from '../components/Icons.jsx';
 
 const STATUS_OPTIONS = ['pending', 'reviewed', 'rejected', 'hired'];
 
@@ -100,7 +103,9 @@ export default function RecruiterApplicants() {
   return (
     <div className="page-wrapper">
       <div style={{ marginBottom: 'var(--space-2)' }}>
-        <Link to="/dashboard/recruiter" className="text-muted text-sm">← Back to Dashboard</Link>
+        <Link to="/dashboard/recruiter" className="text-muted text-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <IconArrowLeft size={14} /> Back to Dashboard
+        </Link>
       </div>
 
       <div className="page-header">
@@ -168,10 +173,10 @@ export default function RecruiterApplicants() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-secondary"
-                      style={{ padding: '3px 10px', fontSize: 'var(--font-size-xs)' }}
+                      style={{ padding: '3px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                       onClick={e => e.stopPropagation()}
                     >
-                      📄 Resume
+                      <IconFile size={13} /> Resume
                     </a>
                   )}
                 </div>
@@ -196,10 +201,10 @@ export default function RecruiterApplicants() {
               <div style={{ marginTop: 10 }}>
                 <button
                   className="btn btn-secondary"
-                  style={{ padding: '3px 10px', fontSize: 'var(--font-size-xs)' }}
+                  style={{ padding: '3px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                   onClick={() => toggleNotes(app.id)}
                 >
-                  {expandedNotes[app.id] ? '▲ Hide Notes' : '📝 Recruiter Notes'}
+                  {expandedNotes[app.id] ? <><IconChevronUp size={13} /> Hide Notes</> : <><IconEdit size={13} /> Recruiter Notes</>}
                   {notesMap[app.id] ? ' ●' : ''}
                 </button>
                 {expandedNotes[app.id] && (

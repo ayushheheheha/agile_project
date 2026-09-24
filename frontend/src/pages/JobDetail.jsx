@@ -5,6 +5,7 @@ import { useAuth } from '../components/AuthContext.jsx';
 import {
   Loading, ErrorAlert, SkillList, ScoreBadge, formatDate,
 } from '../components/ui.jsx';
+import { IconArrowLeft } from '../components/Icons.jsx';
 
 export default function JobDetail() {
   const { id }       = useParams();
@@ -69,7 +70,9 @@ export default function JobDetail() {
   return (
     <div className="page-wrapper">
       <div style={{ marginBottom: 'var(--space-2)' }}>
-        <Link to="/jobs" className="text-muted text-sm">← Back to jobs</Link>
+        <Link to="/jobs" className="text-muted text-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <IconArrowLeft size={14} /> Back to jobs
+        </Link>
       </div>
 
       <div className="page-header">

@@ -4,7 +4,7 @@ import { profileApi } from '../lib/api.js';
 import { Loading, ErrorAlert, SuccessAlert } from '../components/ui.jsx';
 
 export default function ProfilePage() {
-  const { user, profile: authProfile } = useAuth();
+  const { user } = useAuth();
 
   const [profile, setProfile]   = useState(null);
   const [loading, setLoading]   = useState(true);
