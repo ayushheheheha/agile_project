@@ -1,55 +1,78 @@
-# Dependencies
+# =============================================================================
+# HireSignal — Git Ignore
+# =============================================================================
+
+# ── Dependencies ─────────────────────────────────────────────────────────────
 node_modules/
 **/node_modules/
+.pnp
+.pnp.js
+.npm
+.pnpm-store
 
-# Environment variables — NEVER commit
+# ── Environment Variables (CRITICAL — NEVER COMMIT SECRETS) ──────────────────
 .env
-.env.local
-.env.*.local
-frontend/.env
+.env.*
+!.env.example
+*.env
 backend/.env
+frontend/.env
 
-# Build output
+# ── Build & Production Outputs ───────────────────────────────────────────────
 dist/
+dist-ssr/
 build/
+out/
 frontend/dist/
 backend/dist/
+*.tsbuildinfo
 
-# Logs
+# ── Logs & Debugging ─────────────────────────────────────────────────────────
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
-.pnpm-debug.log*
 
-# OS files
+# ── Testing & Coverage ───────────────────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+jest_results/
+
+# ── Supabase & Local Dev Tools ───────────────────────────────────────────────
+.supabase/
+supabase/.temp/
+
+# ── OS & Filesystem ──────────────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
+ehthumbs.db
 desktop.ini
+$RECYCLE.BIN/
 
-# IDE / editor
-.vscode/
+# ── IDEs & Editors ───────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*~
+*.bak
 
-# Docker
-.docker/
-
-# Coverage
-coverage/
-*.lcov
-
-# Test output
-test-results/
-jest_results/
-
-# Misc
+# ── Temporary & Archive Files ────────────────────────────────────────────────
 .cache/
 .temp/
+tmp/
+temp/
 *.tgz
 *.tar.gz
